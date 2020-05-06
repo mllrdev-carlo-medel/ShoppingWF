@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProfileForm_FormClosing);
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxName = new System.Windows.Forms.TextBox();
@@ -154,6 +153,7 @@
             // 
             // purchaseHistoryGridView
             // 
+            this.purchaseHistoryGridView.AllowUserToAddRows = false;
             this.purchaseHistoryGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.purchaseHistoryGridView.Location = new System.Drawing.Point(12, 117);
             this.purchaseHistoryGridView.MultiSelect = false;
@@ -161,12 +161,14 @@
             this.purchaseHistoryGridView.ReadOnly = true;
             this.purchaseHistoryGridView.RowHeadersWidth = 51;
             this.purchaseHistoryGridView.RowTemplate.Height = 24;
+            this.purchaseHistoryGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.purchaseHistoryGridView.Size = new System.Drawing.Size(706, 156);
             this.purchaseHistoryGridView.TabIndex = 12;
-            this.purchaseHistoryGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.PurchaseHistoryGridView_CellContentClick);
+            this.purchaseHistoryGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.PurchaseHistoryGridView_CellClick);
             // 
             // purchaseItemsGridView
             // 
+            this.purchaseItemsGridView.AllowUserToAddRows = false;
             this.purchaseItemsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.purchaseItemsGridView.Location = new System.Drawing.Point(12, 311);
             this.purchaseItemsGridView.Name = "purchaseItemsGridView";
@@ -175,7 +177,7 @@
             this.purchaseItemsGridView.RowTemplate.Height = 24;
             this.purchaseItemsGridView.Size = new System.Drawing.Size(706, 172);
             this.purchaseItemsGridView.TabIndex = 13;
-            //
+            // 
             // historyLabel
             // 
             this.historyLabel.AutoSize = true;
@@ -228,6 +230,7 @@
             this.Controls.Add(this.label1);
             this.Name = "ProfileForm";
             this.Text = "Profile";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProfileForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.purchaseHistoryGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.purchaseItemsGridView)).EndInit();
             this.ResumeLayout(false);

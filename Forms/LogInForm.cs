@@ -4,10 +4,11 @@ using ShoppingCart.Business.Manager.Interfaces;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ShoppingCart.Helper;
+using ShoppingCart.Forms.Interfaces;
 
 namespace ShoppingCart.Forms
 {
-    public partial class LogInForm : Form
+    public partial class LogInForm : Form, ILogInForm
     {
         public IManager<Customer> Manager { get; } = new CustomerManager();
 
@@ -41,7 +42,7 @@ namespace ShoppingCart.Forms
 
         private void ConfirmButton_Click(object sender, System.EventArgs e)
         {
-            int id = MemberIdTxtBox.Text.ToInt(-1);
+            int id = textBoxMemberId.Text.ToInt(-1);
             Customer customer = Manager.GetById(id, "Id");
 
             if (customer == null)
@@ -53,16 +54,24 @@ namespace ShoppingCart.Forms
             else
             {
                 EnableButtons(false);
-                ProfileForm profileForm = new ProfileForm(customer);
-                profileForm.Show();
+                IForm profileForm = new ProfileForm(customer);
+                ((ProfileForm)profileForm).Show();
             }
         }
 
         private void SignUpButton_Click(object sender, System.EventArgs e)
         {
             EnableButtons(false);
-            SignUpForm signUpForm = new SignUpForm();
-            signUpForm.Show();
+            IForm signUpForm = new SignUpForm();
+            ((SignUpForm)signUpForm).Show();
+        }
+
+        private void customerGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (customerGridView.SelectedRows.Count > 0 && e.RowIndex >= 0)
+            {
+                textBoxMemberId.Text = customerGridView.Rows[e.RowIndex].Cells[0].Value.ToString();
+            }
         }
     }
 }

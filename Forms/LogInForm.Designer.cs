@@ -30,7 +30,7 @@
         {
             this.customerGridView = new System.Windows.Forms.DataGridView();
             this.membershipIdLabel = new System.Windows.Forms.Label();
-            this.MemberIdTxtBox = new System.Windows.Forms.TextBox();
+            this.textBoxMemberId = new System.Windows.Forms.TextBox();
             this.confirmButton = new System.Windows.Forms.Button();
             this.signUpButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.customerGridView)).BeginInit();
@@ -38,15 +38,19 @@
             // 
             // customerGridView
             // 
+            this.customerGridView.AllowUserToAddRows = false;
             this.customerGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.customerGridView.Location = new System.Drawing.Point(12, 12);
+            this.customerGridView.MultiSelect = false;
             this.customerGridView.Name = "customerGridView";
             this.customerGridView.ReadOnly = true;
             this.customerGridView.RowHeadersWidth = 51;
             this.customerGridView.RowTemplate.Height = 24;
+            this.customerGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.customerGridView.Size = new System.Drawing.Size(498, 382);
             this.customerGridView.TabIndex = 0;
-            //
+            this.customerGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.customerGridView_CellClick);
+            // 
             // membershipIdLabel
             // 
             this.membershipIdLabel.AutoSize = true;
@@ -56,12 +60,12 @@
             this.membershipIdLabel.TabIndex = 1;
             this.membershipIdLabel.Text = "Membership ID";
             // 
-            // MemberIdTxtBox
+            // textBoxMemberId
             // 
-            this.MemberIdTxtBox.Location = new System.Drawing.Point(120, 409);
-            this.MemberIdTxtBox.Name = "MemberIdTxtBox";
-            this.MemberIdTxtBox.Size = new System.Drawing.Size(171, 22);
-            this.MemberIdTxtBox.TabIndex = 2;
+            this.textBoxMemberId.Location = new System.Drawing.Point(120, 409);
+            this.textBoxMemberId.Name = "textBoxMemberId";
+            this.textBoxMemberId.Size = new System.Drawing.Size(171, 22);
+            this.textBoxMemberId.TabIndex = 2;
             // 
             // confirmButton
             // 
@@ -90,7 +94,7 @@
             this.ClientSize = new System.Drawing.Size(522, 441);
             this.Controls.Add(this.signUpButton);
             this.Controls.Add(this.confirmButton);
-            this.Controls.Add(this.MemberIdTxtBox);
+            this.Controls.Add(this.textBoxMemberId);
             this.Controls.Add(this.membershipIdLabel);
             this.Controls.Add(this.customerGridView);
             this.Name = "LogInForm";
@@ -105,7 +109,7 @@
 
         private System.Windows.Forms.DataGridView customerGridView;
         private System.Windows.Forms.Label membershipIdLabel;
-        private System.Windows.Forms.TextBox MemberIdTxtBox;
+        private System.Windows.Forms.TextBox textBoxMemberId;
         private System.Windows.Forms.Button confirmButton;
         private System.Windows.Forms.Button signUpButton;
     }

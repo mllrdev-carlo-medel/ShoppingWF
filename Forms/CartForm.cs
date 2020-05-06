@@ -9,10 +9,11 @@ using ShoppingCart.Business.Log;
 using System.Linq;
 using System.Windows.Forms;
 using System.Transactions;
+using ShoppingCart.Forms.Interfaces;
 
 namespace ShoppingCart.Forms
 {
-    public partial class CartForm : Form
+    public partial class CartForm : Form, ICartForm
     {
         private readonly BindingSource bindingSource = new BindingSource();
 
@@ -63,8 +64,6 @@ namespace ShoppingCart.Forms
                                                $"{purchaseDetails.PurchaseItem.Quantity}", $"{purchaseDetails.PurchaseItem.SubTotal}");
             }
 
-            cartGridView.Rows[0].Selected = true;
-
             try
             {
                 textBoxName.Text = cartGridView.SelectedRows[0].Cells[1].Value.ToString();
@@ -78,7 +77,7 @@ namespace ShoppingCart.Forms
                 textBoxPrice.Text = "";
                 textBoxQuantity.Text = "";
                 textBoxSubtotal.Text = "";
-                Logging.log.Info($"No items in cart yet.\n {e}");
+                Logging.log.Info($"No selected items in cart.\n {e}");
             }
 
             textBoxTotal.Text = ComputeTotalPrice().ToString();
@@ -90,12 +89,15 @@ namespace ShoppingCart.Forms
             return total;
         }
 
-        private void CartGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void CartGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            textBoxName.Text = cartGridView.Rows[e.RowIndex].Cells[1].Value.ToString();
-            textBoxPrice.Text = cartGridView.Rows[e.RowIndex].Cells[2].Value.ToString();
-            textBoxQuantity.Text = cartGridView.Rows[e.RowIndex].Cells[3].Value.ToString();
-            textBoxSubtotal.Text = cartGridView.Rows[e.RowIndex].Cells[4].Value.ToString();
+            if (e.RowIndex >= 0)
+            {
+                textBoxName.Text = cartGridView.Rows[e.RowIndex].Cells[1].Value.ToString();
+                textBoxPrice.Text = cartGridView.Rows[e.RowIndex].Cells[2].Value.ToString();
+                textBoxQuantity.Text = cartGridView.Rows[e.RowIndex].Cells[3].Value.ToString();
+                textBoxSubtotal.Text = cartGridView.Rows[e.RowIndex].Cells[4].Value.ToString();
+            }
         }
 
         private void AddButton_Click(object sender, EventArgs e)
@@ -247,6 +249,9 @@ namespace ShoppingCart.Forms
 
                     if (PurchaseManager.Update(Purchase))
                     {
+                        string caption = "Success";
+                        string message = "Thank you. Please come again.";
+                        DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OK);
                         this.Close();
                     }
                     else
@@ -270,9 +275,9 @@ namespace ShoppingCart.Forms
 
         private void CartForm_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ProfileForm profileForm = (ProfileForm)Application.OpenForms["ProfileForm"];
-            profileForm.LoadData();
-            profileForm.EnableNewPurchaseButton(true);
+            IForm profileForm = (ProfileForm)Application.OpenForms["ProfileForm"];
+            ((ProfileForm)profileForm).LoadData();
+            ((ProfileForm)profileForm).EnableNewPurchaseButton(true);
         }
     }
 }

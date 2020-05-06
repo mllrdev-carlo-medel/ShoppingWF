@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ShoppingCart.Business.Log;
 using log4net.Config;
 using ShoppingCart.Forms;
+using ShoppingCart.Forms.Interfaces;
 
 namespace ShoppingCart
 {
@@ -16,7 +17,9 @@ namespace ShoppingCart
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LogInForm());
+
+            IForm logInForm = new LogInForm();
+            Application.Run((LogInForm)logInForm);
         }
     }
 }

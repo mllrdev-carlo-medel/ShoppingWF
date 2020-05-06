@@ -1,7 +1,9 @@
 ﻿using ShoppingCart.Business.Entity;
+using ShoppingCart.Business.Log;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Business.Model;
+using ShoppingCart.Forms.Interfaces;
 using ShoppingCart.Helper;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ using System.Windows.Forms;
 
 namespace ShoppingCart.Forms
 {
-    public partial class ProfileForm : Form
+    public partial class ProfileForm : Form, IProfileForm
     {
 
         public IManager<Customer> CustomerManager { get; } = new CustomerManager();
@@ -86,18 +88,23 @@ namespace ShoppingCart.Forms
             newPurchaseButton.Enabled = value;
         }
 
-        private void PurchaseHistoryGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void PurchaseHistoryGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            int id = purchaseHistoryGridView.Rows[e.RowIndex].Cells[0].Value.ToString().ToInt(-1);
-
-            purchaseItemsGridView.Rows.Clear();
-
-
-            PurchaseHistory purchaseHistory = Customer.PurchaseHistory.Find(x => x.Purchase.Id == id);
-            foreach (PurchaseDetails purchaseDetails in purchaseHistory.PurchaseDetails)
+            try
             {
-                purchaseItemsGridView.Rows.Add($"{purchaseDetails.Item.Id}", $"{purchaseDetails.Item.Name}", $"{purchaseDetails.Item.Price}",
-                                               $"{purchaseDetails.PurchaseItem.Quantity}", $"{purchaseDetails.PurchaseItem.SubTotal}");
+                int id = purchaseHistoryGridView.Rows[e.RowIndex].Cells[0].Value.ToString().ToInt(-1);
+                purchaseItemsGridView.Rows.Clear();
+                PurchaseHistory purchaseHistory = Customer.PurchaseHistory.Find(x => x.Purchase.Id == id);
+
+                foreach (PurchaseDetails purchaseDetails in purchaseHistory.PurchaseDetails)
+                {
+                    purchaseItemsGridView.Rows.Add($"{purchaseDetails.Item.Id}", $"{purchaseDetails.Item.Name}", $"{purchaseDetails.Item.Price}",
+                                                   $"{purchaseDetails.PurchaseItem.Quantity}", $"{purchaseDetails.PurchaseItem.SubTotal}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.log.Error(ex.ToString());
             }
         }
 
@@ -114,8 +121,8 @@ namespace ShoppingCart.Forms
                 {
                     LoadData();
                     EnableNewPurchaseButton(false);
-                    CartForm cartForm = new CartForm(new List<PurchaseDetails>(), purchase);
-                    cartForm.Show();
+                    IForm cartForm = new CartForm(new List<PurchaseDetails>(), purchase);
+                    ((CartForm)cartForm).Show();
                 }
                 else 
                 {
@@ -134,8 +141,8 @@ namespace ShoppingCart.Forms
                 {
                     purchase = purchaseHistory.Purchase;
                     EnableNewPurchaseButton(false);
-                    CartForm cartForm = new CartForm(purchaseHistory.PurchaseDetails, purchase);
-                    cartForm.Show();
+                    IForm cartForm = new CartForm(purchaseHistory.PurchaseDetails, purchase);
+                    ((CartForm)cartForm).Show();
                 }
                 else
                 {
@@ -151,8 +158,8 @@ namespace ShoppingCart.Forms
                     {
                         LoadData();
                         EnableNewPurchaseButton(false);
-                        CartForm cartForm = new CartForm(new List<PurchaseDetails>(), purchase);
-                        cartForm.Show();
+                        IForm cartForm = new CartForm(new List<PurchaseDetails>(), purchase);
+                        ((CartForm)cartForm).Show();
                     }
                     else
                     {
@@ -175,8 +182,8 @@ namespace ShoppingCart.Forms
             }
             else
             {
-                LogInForm logInForm = (LogInForm)Application.OpenForms["LogInForm"];
-                logInForm.EnableButtons(true);
+                IForm logInForm = (LogInForm)Application.OpenForms["LogInForm"];
+                ((LogInForm)logInForm).EnableButtons(true);
             }
         }
     }

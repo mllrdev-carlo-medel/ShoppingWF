@@ -1,6 +1,7 @@
 ﻿using ShoppingCart.Business.Entity;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
+using ShoppingCart.Forms.Interfaces;
 using ShoppingCart.Helper;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ using System.Windows.Forms;
 
 namespace ShoppingCart.Forms
 {
-    public partial class SignUpForm : Form
+    public partial class SignUpForm : Form, ISignUpForm
     {
         public IManager<Customer> Manager { get; } = new CustomerManager();
 
@@ -27,41 +28,51 @@ namespace ShoppingCart.Forms
 
         private void SubmitButton_Click(object sender, EventArgs e)
         {
-            Customer customer = new Customer();
-
-            customer.Id = GenerateID.GetGeneratedID();
-            customer.FirstName = textBoxFirstName.Text;
-            customer.MiddleName = textBoxMiddleName.Text;
-            customer.LastName = textBoxLastName.Text;
-            customer.Gender = Controls.OfType<RadioButton>().FirstOrDefault(x => x.Checked).Text;
-            customer.ContactNo = textBoxPhone.Text;
-            customer.Email = textBoxEmail.Text;
-            customer.Address = textBoxAddress.Text;
-
-            if (Manager.Add(customer))
+            if (textBoxFirstName.Text == null || textBoxMiddleName.Text == null || textBoxLastName.Text == null ||
+                textBoxAddress.Text == null || textBoxEmail.Text == null || textBoxPhone.Text == null ||
+                Controls.OfType<RadioButton>().FirstOrDefault(x => x.Checked) == null)
             {
-                success = true;
-                LogInForm logInForm = (LogInForm)Application.OpenForms["LogInForm"];
-                logInForm.LoadData();
-                
-                ProfileForm profileForm = new ProfileForm(customer);
-                profileForm.Show();
-                this.Close();
+                string message = "All fields must be fill up.";
+                string caption = "Please try again.";
+                DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OK);
             }
             else
             {
-                string message = "";
-                string caption = "Please try again.";
-                DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OK);
-            }   
+                Customer customer = new Customer();
+                customer.Id = GenerateID.GetGeneratedID();
+                customer.FirstName = textBoxFirstName.Text;
+                customer.MiddleName = textBoxMiddleName.Text;
+                customer.LastName = textBoxLastName.Text;
+                customer.Gender = Controls.OfType<RadioButton>().FirstOrDefault(x => x.Checked).Text;
+                customer.ContactNo = textBoxPhone.Text;
+                customer.Email = textBoxEmail.Text;
+                customer.Address = textBoxAddress.Text;
+
+                if (Manager.Add(customer))
+                {
+                    success = true;
+                    IForm logInForm = (LogInForm)Application.OpenForms["LogInForm"];
+                    ((LogInForm)logInForm).LoadData();
+
+                    IForm profileForm = new ProfileForm(customer);
+                    ((ProfileForm)profileForm).Show();
+                    this.Close();
+                }
+                else
+                {
+                    string message = "";
+                    string caption = "Please try again.";
+                    DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                }
+            }
         }
 
         private void SignUpForm_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!success)
             {
-                LogInForm logInForm = (LogInForm)Application.OpenForms["LogInForm"];
-                logInForm.EnableButtons(true);
+                IForm logInForm = (LogInForm)Application.OpenForms["LogInForm"];
+                ((LogInForm)logInForm).EnableButtons(true);
             }
         }
     }

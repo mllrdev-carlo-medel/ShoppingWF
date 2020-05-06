@@ -54,6 +54,7 @@
             // 
             // itemsGridView
             // 
+            this.itemsGridView.AllowUserToAddRows = false;
             this.itemsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.itemsGridView.Location = new System.Drawing.Point(577, 34);
             this.itemsGridView.MultiSelect = false;
@@ -223,6 +224,7 @@
             // 
             // cartGridView
             // 
+            this.cartGridView.AllowUserToAddRows = false;
             this.cartGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.cartGridView.Location = new System.Drawing.Point(7, 21);
             this.cartGridView.MultiSelect = false;
@@ -233,7 +235,7 @@
             this.cartGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.cartGridView.Size = new System.Drawing.Size(531, 263);
             this.cartGridView.TabIndex = 0;
-            this.cartGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CartGridView_CellContentClick);
+            this.cartGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CartGridView_CellClick);
             // 
             // addButton
             // 

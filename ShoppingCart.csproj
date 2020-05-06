@@ -56,6 +56,11 @@
     <Compile Include="Forms\CartForm.Designer.cs">
       <DependentUpon>CartForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Interfaces\ICartForm.cs" />
+    <Compile Include="Forms\Interfaces\IForm.cs" />
+    <Compile Include="Forms\Interfaces\ILogInForm.cs" />
+    <Compile Include="Forms\Interfaces\IProfileForm.cs" />
+    <Compile Include="Forms\Interfaces\ISignUpForm.cs" />
     <Compile Include="Forms\LogInForm.cs">
       <SubType>Form</SubType>
     </Compile>

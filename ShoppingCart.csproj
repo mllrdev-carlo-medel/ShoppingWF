@@ -59,6 +59,7 @@
     <Compile Include="Forms\Interfaces\ICartForm.cs" />
     <Compile Include="Forms\Interfaces\IForm.cs" />
     <Compile Include="Forms\Interfaces\ILogInForm.cs" />
+    <Compile Include="Forms\Interfaces\IMainForm.cs" />
     <Compile Include="Forms\Interfaces\IProfileForm.cs" />
     <Compile Include="Forms\Interfaces\ISignUpForm.cs" />
     <Compile Include="Forms\LogInForm.cs">
@@ -66,6 +67,12 @@
     </Compile>
     <Compile Include="Forms\LogInForm.Designer.cs">
       <DependentUpon>LogInForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainFrom.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainFrom.Designer.cs">
+      <DependentUpon>MainFrom.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ProfileForm.cs">
       <SubType>Form</SubType>
@@ -88,6 +95,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\LogInForm.resx">
       <DependentUpon>LogInForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainFrom.resx">
+      <DependentUpon>MainFrom.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProfileForm.resx">
       <DependentUpon>ProfileForm.cs</DependentUpon>

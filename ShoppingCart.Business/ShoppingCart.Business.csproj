@@ -52,11 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entity\Customer.cs" />
-    <Compile Include="Entity\Item.cs" />
-    <Compile Include="Entity\Purchase.cs" />
-    <Compile Include="Entity\PurchaseItem.cs" />
-    <Compile Include="Log\Logging.cs" />
+    <Compile Include="Entities\Customer.cs" />
+    <Compile Include="Entities\Item.cs" />
+    <Compile Include="Entities\Purchase.cs" />
+    <Compile Include="Entities\PurchaseItem.cs" />
+    <Compile Include="Log\Logger.cs" />
     <Compile Include="Manager\BaseManager.cs" />
     <Compile Include="Manager\CustomerManager.cs" />
     <Compile Include="Manager\Interfaces\ICustomerManager.cs" />

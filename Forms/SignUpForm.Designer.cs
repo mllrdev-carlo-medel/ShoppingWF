@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SignUpForm_FormClosing);
             this.textBoxEmail = new System.Windows.Forms.TextBox();
             this.textBoxPhone = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -49,6 +48,9 @@
             // 
             // textBoxEmail
             // 
+            this.textBoxEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxEmail.Location = new System.Drawing.Point(79, 188);
             this.textBoxEmail.Name = "textBoxEmail";
             this.textBoxEmail.Size = new System.Drawing.Size(226, 22);
@@ -56,6 +58,9 @@
             // 
             // textBoxPhone
             // 
+            this.textBoxPhone.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxPhone.Location = new System.Drawing.Point(79, 160);
             this.textBoxPhone.Name = "textBoxPhone";
             this.textBoxPhone.Size = new System.Drawing.Size(226, 22);
@@ -90,6 +95,9 @@
             // 
             // textBoxAddress
             // 
+            this.textBoxAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxAddress.Location = new System.Drawing.Point(79, 104);
             this.textBoxAddress.Name = "textBoxAddress";
             this.textBoxAddress.Size = new System.Drawing.Size(374, 22);
@@ -97,6 +105,9 @@
             // 
             // textBoxFirstName
             // 
+            this.textBoxFirstName.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxFirstName.Location = new System.Drawing.Point(108, 9);
             this.textBoxFirstName.Name = "textBoxFirstName";
             this.textBoxFirstName.Size = new System.Drawing.Size(346, 22);
@@ -104,6 +115,8 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(11, 104);
             this.label2.Name = "label2";
@@ -113,6 +126,8 @@
             // 
             // firstNameLabel
             // 
+            this.firstNameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.firstNameLabel.AutoSize = true;
             this.firstNameLabel.Location = new System.Drawing.Point(12, 9);
             this.firstNameLabel.Name = "firstNameLabel";
@@ -144,6 +159,8 @@
             // 
             // middleNameLabel
             // 
+            this.middleNameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.middleNameLabel.AutoSize = true;
             this.middleNameLabel.Location = new System.Drawing.Point(12, 37);
             this.middleNameLabel.Name = "middleNameLabel";
@@ -153,6 +170,9 @@
             // 
             // textBoxMiddleName
             // 
+            this.textBoxMiddleName.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMiddleName.Location = new System.Drawing.Point(108, 37);
             this.textBoxMiddleName.Name = "textBoxMiddleName";
             this.textBoxMiddleName.Size = new System.Drawing.Size(346, 22);
@@ -160,6 +180,9 @@
             // 
             // textBoxLastName
             // 
+            this.textBoxLastName.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxLastName.Location = new System.Drawing.Point(108, 65);
             this.textBoxLastName.Name = "textBoxLastName";
             this.textBoxLastName.Size = new System.Drawing.Size(345, 22);
@@ -167,6 +190,8 @@
             // 
             // lastNameLabel
             // 
+            this.lastNameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.lastNameLabel.AutoSize = true;
             this.lastNameLabel.Location = new System.Drawing.Point(12, 65);
             this.lastNameLabel.Name = "lastNameLabel";
@@ -176,7 +201,9 @@
             // 
             // submitButton
             // 
-            this.submitButton.Location = new System.Drawing.Point(312, 133);
+            this.submitButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.submitButton.Location = new System.Drawing.Point(313, 133);
             this.submitButton.Name = "submitButton";
             this.submitButton.Size = new System.Drawing.Size(141, 78);
             this.submitButton.TabIndex = 30;
@@ -188,7 +215,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(465, 223);
+            this.ClientSize = new System.Drawing.Size(462, 213);
             this.Controls.Add(this.submitButton);
             this.Controls.Add(this.lastNameLabel);
             this.Controls.Add(this.textBoxLastName);
@@ -205,8 +232,11 @@
             this.Controls.Add(this.textBoxFirstName);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.firstNameLabel);
+            this.MaximumSize = new System.Drawing.Size(1000, 260);
+            this.MinimumSize = new System.Drawing.Size(480, 260);
             this.Name = "SignUpForm";
             this.Text = "Sign Up";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SignUpForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

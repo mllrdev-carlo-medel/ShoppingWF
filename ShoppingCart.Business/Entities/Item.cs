@@ -12,16 +12,19 @@ namespace ShoppingCart.Business.Entity
         public string Name { get; set; }
         public float Price { get; set; }
 
+        public int Stocks { get; set; }
+
         public Item()
         {
 
         }
 
-        public Item(int id, string name, float price)
+        public Item(int id, string name, float price, int stocks)
         {
             Id = id;
             Name = name;
             Price = price;
+            Stocks = stocks;
         }
     }
 }

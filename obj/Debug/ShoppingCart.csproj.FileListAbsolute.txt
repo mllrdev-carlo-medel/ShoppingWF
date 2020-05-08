@@ -19,3 +19,4 @@ D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.LogInForm.re
 D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.ProfileForm.resources
 D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.SignUpForm.resources
 D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.CartForm.resources
+D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.MainForm.resources

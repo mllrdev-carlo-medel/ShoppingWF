@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.CodeDom;
+using System.Collections.Generic;
+using System.Reflection;
 using ShoppingCart.Business.Repository.Interfaces;
 
 namespace ShoppingCart.Business.Manager
@@ -12,9 +15,9 @@ namespace ShoppingCart.Business.Manager
             return Repository.Add(data);
         }
 
-        public bool Delete(int[] id, string name)
+        public bool Delete(List<T> datas)
         {
-            return Repository.Delete(id, name);
+            return Repository.Delete(datas, GetCondition(datas[0]));
         }
 
         public List<T> GetAll()
@@ -22,19 +25,43 @@ namespace ShoppingCart.Business.Manager
             return Repository.GetAll();
         }
 
-        public T GetById(int id, string name)
+        public T GetById(int id)
         {
-            return Repository.GetById(id, name);
+            return Repository.GetById(id);
         }
 
-        public List<T> GetAllById(int id, string name)
+        public List<T> GetAllWhere(T data)
         {
-            return Repository.GetAllById(id, name);
+            return Repository.GetAllWhere(data, GetCondition(data));
         }
 
         public bool Update(T data)
         {
             return Repository.Update(data);
+        }
+
+        private string GetCondition (T data)
+        {
+            string condition = "";
+            PropertyInfo[] properties = typeof(T).GetProperties();
+
+            foreach (PropertyInfo property in properties)
+            {
+                if (property.PropertyType == typeof(string) && property.GetValue(data) != null)
+                {
+                    condition += $"{property.Name}=@{property.Name} ";
+                }
+                else if (property.PropertyType == typeof(int) && (int)property.GetValue(data) >= 0)
+                {
+                    condition += $"{property.Name}=@{property.Name} ";
+                }
+                else if (property.PropertyType == typeof(float) && (float)property.GetValue(data) >= 0)
+                {
+                    condition += $"{property.Name}=@{property.Name} ";
+                }
+            }
+
+            return condition;
         }
     }
 }

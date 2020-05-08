@@ -33,7 +33,7 @@ namespace ShoppingCart.Business.Repository
             }
             catch (Exception ex)
             {
-                Logging.log.Error(ex.StackTrace);
+                Logger.log.Error(ex.StackTrace);
                 return new List<T>();
             }
         }
@@ -42,63 +42,60 @@ namespace ShoppingCart.Business.Repository
         {
             try
             {
-                List<string> filedList = new List<string>();
+                List<string> fieldList = new List<string>();
                 List<string> valueList = new List<string>();
                 PropertyInfo[] properties = typeof(T).GetProperties();
 
                 foreach (PropertyInfo property in properties)
                 {
-                    filedList.Add(property.Name);
-                    valueList.Add("@" + property.Name);
+                    fieldList.Add(property.Name);
+                    valueList.Add($"@{property.Name}");
                 }
 
-                string field = string.Join(", ", filedList);
+                string field = string.Join(", ", fieldList);
                 string value = string.Join(", ", valueList);
 
                 string query = $"INSERT INTO {Table} ({field}) VALUES ({value})";
 
-                int count = Connection.Execute(query, data);
-                return count == 1;
+                return Connection.Execute(query, data) == 1;
             }
             catch (Exception ex)
             {
-                Logging.log.Error(ex.StackTrace);
+                Logger.log.Error(ex.StackTrace);
                 return false;
             }
         }
 
-        public T GetById(int id, string name)
+        public T GetById(int id)
         {
             try
             {
                 PropertyInfo[] properties = typeof(T).GetProperties();
-                string condition = $"{name}=@Id";
 
-                string query = $"SELECT * FROM {Table} WHERE {condition}";
+                string query = $"SELECT * FROM {Table} WHERE Id=@Id";
 
                 return Connection.Query<T>(query, new { Id = id }).FirstOrDefault();
             }
             catch (Exception ex)
             {
-                Logging.log.Error(ex.StackTrace);
+                Logger.log.Error(ex.StackTrace);
                 return null;
             }
         }
 
-        public List<T> GetAllById(int id, string name)
+        public List<T> GetAllWhere(T data, string condition)
         {
             try
             {
                 PropertyInfo[] properties = typeof(T).GetProperties();
-                string condition = $"{name}=@Id";
 
                 string query = $"SELECT * FROM {Table} WHERE {condition}";
 
-                return Connection.Query<T>(query, new { Id = id }).ToList();
+                return Connection.Query<T>(query, data).ToList();
             }
             catch (Exception ex)
             {
-                Logging.log.Error(ex.StackTrace);
+                Logger.log.Error(ex.StackTrace);
                 return null;
             }
         }
@@ -112,7 +109,7 @@ namespace ShoppingCart.Business.Repository
 
                 string condition = $"{properties[0].Name}=@{properties[0].Name}";
 
-                foreach (PropertyInfo property in properties)
+                foreach (PropertyInfo property in properties.Skip(1))
                 {
                     fieldList.Add($"{property.Name} = @{property.Name}");
                 }
@@ -120,30 +117,29 @@ namespace ShoppingCart.Business.Repository
                 string field = string.Join(", ", fieldList);
 
                 string query = $"UPDATE {Table} SET {field} WHERE {condition}";
-                int count = Connection.Execute(query, data);
-                return count == 1;
+
+                return Connection.Execute(query, data) > 0;
+                
             }
             catch (Exception ex)
             {
-                Logging.log.Error(ex.StackTrace);
+                Logger.log.Error(ex.StackTrace);
                 return false;
             }
         }
 
-        public bool Delete(int[] ids, string name)
+        public bool Delete(List<T> datas, string condition)
         {
             try
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    foreach (int id in ids)
+                    foreach (T data in datas)
                     {
                         PropertyInfo[] properties = typeof(T).GetProperties();
-                        string condition = $"{name}=@Id";
 
                         string query = $"DELETE FROM {Table} WHERE {condition}";
-
-                        int count = Connection.Execute(query, new { Id = id });
+                        int count = Connection.Execute(query, data);
 
                         if (count <= 0)
                         {
@@ -158,7 +154,7 @@ namespace ShoppingCart.Business.Repository
             }
             catch (Exception ex)
             {
-                Logging.log.Error(ex.StackTrace);
+                Logger.log.Error(ex.StackTrace);
                 return false;
             }
         }

@@ -6,9 +6,9 @@ namespace ShoppingCart.Business.Manager.Interfaces
     {
         List<T> GetAll();
         bool Add(T data);
-        T GetById(int id, string name);
-        List<T> GetAllById(int id, string name);
+        T GetById(int id);
+        List<T> GetAllWhere(T data);
         bool Update(T data);
-        bool Delete(int[] id, string name);
+        bool Delete(List<T> data);
     }
 }

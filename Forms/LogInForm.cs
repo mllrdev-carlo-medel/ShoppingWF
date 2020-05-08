@@ -5,14 +5,14 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using ShoppingCart.Helper;
 using ShoppingCart.Forms.Interfaces;
+using System;
+using System.Linq;
 
 namespace ShoppingCart.Forms
 {
     public partial class LogInForm : Form, ILogInForm
     {
-        public IManager<Customer> Manager { get; } = new CustomerManager();
-
-        private readonly BindingSource bindingSource = new BindingSource();
+        private IManager<Customer> Manager { get; } = new CustomerManager();
 
         public LogInForm()
         {
@@ -22,16 +22,14 @@ namespace ShoppingCart.Forms
 
         public void LoadData()
         {
-            customerGridView.Rows.Clear();
-            bindingSource.DataSource = typeof(Customer);
+            customerListView.Items.Clear();
 
             foreach (Customer customer in Manager.GetAll())
             {
-                bindingSource.Add(customer);
+                customerListView.Items.Add(new ListViewItem(new[] {customer.Id.ToString(),
+                                                                   $"{customer.FirstName} {customer.MiddleName} {customer.LastName}",
+                                                                   customer.Address}));
             }
-
-            customerGridView.DataSource = bindingSource;
-            customerGridView.AutoGenerateColumns = true;
         }
 
         public void EnableButtons (bool value)
@@ -43,18 +41,19 @@ namespace ShoppingCart.Forms
         private void ConfirmButton_Click(object sender, System.EventArgs e)
         {
             int id = textBoxMemberId.Text.ToInt(-1);
-            Customer customer = Manager.GetById(id, "Id");
+            Customer customer = Manager.GetById(id);
 
             if (customer == null)
             {
                 string message = "Entered ID can't be found.";
                 string caption = "Please try again."; 
-                DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                MessageBox.Show(message, caption, MessageBoxButtons.OK);
             }
             else
             {
                 EnableButtons(false);
-                IForm profileForm = new ProfileForm(customer);
+                IForm profileForm = new ProfileForm(id);
+                ((ProfileForm)profileForm).MdiParent = this.ParentForm;
                 ((ProfileForm)profileForm).Show();
             }
         }
@@ -63,14 +62,56 @@ namespace ShoppingCart.Forms
         {
             EnableButtons(false);
             IForm signUpForm = new SignUpForm();
+            ((SignUpForm)signUpForm).MdiParent = this.ParentForm;
             ((SignUpForm)signUpForm).Show();
         }
 
-        private void customerGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void CustomerListView_Click(object sender, System.EventArgs e)
         {
-            if (customerGridView.SelectedRows.Count > 0 && e.RowIndex >= 0)
+            if (customerListView.SelectedItems.Count > 0)
             {
-                textBoxMemberId.Text = customerGridView.Rows[e.RowIndex].Cells[0].Value.ToString();
+                textBoxMemberId.Text = customerListView.SelectedItems[0].Text;
+            }
+        }
+
+        private void TextBoxSearch_TextChanged(object sender, System.EventArgs e)
+        {
+            string searchString = textBoxSearch.Text;
+
+            if (string.IsNullOrEmpty(searchString))
+            {
+                LoadData();
+            }
+            else
+            {
+                List<ListViewItem> listViewItems = new List<ListViewItem>();
+
+                foreach (Customer customer in Manager.GetAll())
+                {
+                    string name = $"{customer.FirstName} {customer.MiddleName} {customer.LastName}";
+
+                    if (name.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                        customer.Address.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    {
+                        listViewItems.Add(new ListViewItem(new[] {customer.Id.ToString(),
+                                                                   $"{customer.FirstName} {customer.MiddleName} {customer.LastName}",
+                                                                   customer.Address}));
+                    }
+                }
+
+                if (listViewItems.Count > 0)
+                {
+                    customerListView.Items.Clear();
+
+                    foreach (ListViewItem item in listViewItems)
+                    {
+                        customerListView.Items.Add(item);
+                    }
+                }
+                else
+                {
+                    customerListView.Items.Clear();
+                }
             }
         }
     }

@@ -4,13 +4,7 @@ using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Forms.Interfaces;
 using ShoppingCart.Helper;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ShoppingCart.Forms
@@ -51,10 +45,11 @@ namespace ShoppingCart.Forms
                 if (Manager.Add(customer))
                 {
                     success = true;
-                    IForm logInForm = (LogInForm)Application.OpenForms["LogInForm"];
+                    IForm logInForm = Application.OpenForms.OfType<LogInForm>().FirstOrDefault();
                     ((LogInForm)logInForm).LoadData();
 
-                    IForm profileForm = new ProfileForm(customer);
+                    IForm profileForm = new ProfileForm(customer.Id);
+                    ((ProfileForm)profileForm).MdiParent = this.ParentForm;
                     ((ProfileForm)profileForm).Show();
                     this.Close();
                 }
@@ -71,7 +66,7 @@ namespace ShoppingCart.Forms
         {
             if (!success)
             {
-                IForm logInForm = (LogInForm)Application.OpenForms["LogInForm"];
+                IForm logInForm = Application.OpenForms.OfType<LogInForm>().FirstOrDefault();
                 ((LogInForm)logInForm).EnableButtons(true);
             }
         }

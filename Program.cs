@@ -18,8 +18,8 @@ namespace ShoppingCart
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            IForm logInForm = new LogInForm();
-            Application.Run((LogInForm)logInForm);
+            IForm mainForm = new MainForm();
+            Application.Run((MainForm)mainForm);
         }
     }
 }

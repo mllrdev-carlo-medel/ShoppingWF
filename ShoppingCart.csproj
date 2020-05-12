@@ -50,23 +50,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants\ProfileStringConstants.cs" />
+    <Compile Include="Factory\CustomerFactory.cs" />
     <Compile Include="Forms\CartForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\CartForm.Designer.cs">
       <DependentUpon>CartForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Interfaces\ICartForm.cs" />
-    <Compile Include="Forms\Interfaces\IForm.cs" />
-    <Compile Include="Forms\Interfaces\ILogInForm.cs" />
-    <Compile Include="Forms\Interfaces\IMainForm.cs" />
-    <Compile Include="Forms\Interfaces\IProfileForm.cs" />
-    <Compile Include="Forms\Interfaces\ISignUpForm.cs" />
-    <Compile Include="Forms\LogInForm.cs">
+    <Compile Include="Forms\CustomerForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\LogInForm.Designer.cs">
-      <DependentUpon>LogInForm.cs</DependentUpon>
+    <Compile Include="Forms\CustomerForm.Designer.cs">
+      <DependentUpon>CustomerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ItemPromptForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ItemPromptForm.Designer.cs">
+      <DependentUpon>ItemPromptForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ItemsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ItemsForm.Designer.cs">
+      <DependentUpon>ItemsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\MainFrom.cs">
       <SubType>Form</SubType>
@@ -86,15 +94,24 @@
     <Compile Include="Forms\SignUpForm.Designer.cs">
       <DependentUpon>SignUpForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helper\GenerateId.cs" />
-    <Compile Include="Helper\StringExtensions.cs" />
+    <Compile Include="Helper\PrimaryId.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Model\CustomerDetails.cs" />
+    <Compile Include="Model\PurchaseDetails.cs" />
+    <Compile Include="Model\PurchaseHistory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\CartForm.resx">
       <DependentUpon>CartForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\LogInForm.resx">
-      <DependentUpon>LogInForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\CustomerForm.resx">
+      <DependentUpon>CustomerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ItemPromptForm.resx">
+      <DependentUpon>ItemPromptForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ItemsForm.resx">
+      <DependentUpon>ItemsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainFrom.resx">
       <DependentUpon>MainFrom.cs</DependentUpon>

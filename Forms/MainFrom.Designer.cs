@@ -37,6 +37,7 @@
             this.ClientSize = new System.Drawing.Size(1070, 626);
             this.IsMdiContainer = true;
             this.Name = "MainForm";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
 

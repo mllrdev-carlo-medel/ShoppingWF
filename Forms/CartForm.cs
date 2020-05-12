@@ -2,91 +2,88 @@
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Business.Model;
-using ShoppingCart.Helper;
+using ShoppingCart.Extensions;
 using System;
 using System.Collections.Generic;
 using ShoppingCart.Business.Log;
 using System.Linq;
 using System.Windows.Forms;
 using System.Transactions;
-using ShoppingCart.Forms.Interfaces;
 
 namespace ShoppingCart.Forms
 {
-    public partial class CartForm : Form, ICartForm
+    public partial class CartForm : Form
     {
-        private IManager<Item> ItemManager { get; } = new ItemManager();
-        private IManager<PurchaseItem> PurchaseItemManager { get; } = new PurchaseItemManager();
+        private readonly IManager<Item> _itemManager = new ItemManager();
+        private readonly IManager<PurchaseItem> _purchaseItemManager = new PurchaseItemManager();
 
-        private IManager<Purchase> PurchaseManager { get; } = new PurchaseManager();
+        private readonly IManager<Purchase> _purchaseManager = new PurchaseManager();
 
-        private Purchase Purchase { get; }
-        private List<PurchaseDetails> Purchases { get; }
+        private readonly Purchase _purchase;
+        private readonly List<PurchaseDetails> _purchases;
 
         public CartForm(List<PurchaseDetails> purchaseDetails, Purchase purchase)
         {
             InitializeComponent();
-            Purchases = purchaseDetails;
-            Purchase = purchase;
-            LoadData();
+            _purchases = purchaseDetails;
+            _purchase = purchase;
         }
 
         public void LoadData()
         {
-            itemListView.Items.Clear();
-            cartListView.Items.Clear();
-
-            foreach (PurchaseDetails purchaseDetails in Purchases)
-            {
-                ListViewItem listViewItem = new ListViewItem(new[] { "",
-                                                                     purchaseDetails.PurchaseItem.ItemId.ToString(),
-                                                                     purchaseDetails.Name,
-                                                                     purchaseDetails.Price.ToString(),
-                                                                     purchaseDetails.PurchaseItem.Quantity.ToString(),
-                                                                     purchaseDetails.PurchaseItem.SubTotal.ToString()});
-                listViewItem.Checked = false;
-                cartListView.Items.Add(listViewItem);
-            }
-
-            foreach (Item item in ItemManager.GetAll())
-            {
-                ListViewItem listViewItem = new ListViewItem(new[] {"",
-                                                             item.Id.ToString(),
-                                                             item.Name,
-                                                             item.Price.ToString(),
-                                                             item.Stocks.ToString()});
-                
-                if (Purchases.Find(x => x.PurchaseItem.ItemId == item.Id) != null || item.Stocks == 0)
-                {
-                    listViewItem.BackColor = System.Drawing.Color.Gray;
-                }
-
-                itemListView.Items.Add(listViewItem);
-            }
-
             try
             {
-                cartListView.Items[0].Selected = true;
-                textBoxName.Text = cartListView.SelectedItems[0].SubItems[2].Text;
-                textBoxPrice.Text = cartListView.SelectedItems[0].SubItems[3].Text;
-                textBoxQuantity.Text = cartListView.SelectedItems[0].SubItems[4].Text;
-                textBoxSubtotal.Text = cartListView.SelectedItems[0].SubItems[5].Text;
-            }
-            catch (Exception e)
-            {
-                textBoxName.Text = "";
-                textBoxPrice.Text = "";
-                textBoxQuantity.Text = "";
-                textBoxSubtotal.Text = "";
-                Logger.log.Info($"No selected items in cart.\n {e}");
-            }
+                cartListView.Items.Clear();
+                List<ListViewItem> listViewItems = new List<ListViewItem>();
 
-            textBoxTotal.Text = ComputeTotalPrice().ToString();
+                foreach (PurchaseDetails purchaseDetails in _purchases)
+                {
+                    listViewItems.Add(new ListViewItem(new[] { string.Empty,
+                                                            purchaseDetails.PurchaseItem.ItemId.ToString(),
+                                                            purchaseDetails.Name,
+                                                            purchaseDetails.Price.ToString(),
+                                                            purchaseDetails.PurchaseItem.Quantity.ToString(),
+                                                            purchaseDetails.PurchaseItem.SubTotal.ToString()})
+                    {
+                        Checked = false
+                    });
+                }
+
+                cartListView.Items.AddRange(listViewItems.ToArray());
+
+                try
+                {
+                    cartListView.Items[0].Selected = true;
+                    textBoxName.Text = cartListView.SelectedItems[0].SubItems[2].Text;
+                    textBoxPrice.Text = cartListView.SelectedItems[0].SubItems[3].Text;
+                    textBoxQuantity.Text = cartListView.SelectedItems[0].SubItems[4].Text;
+                    textBoxSubtotal.Text = cartListView.SelectedItems[0].SubItems[5].Text;
+                }
+                catch (Exception e)
+                {
+                    textBoxName.Text = string.Empty;
+                    textBoxPrice.Text = string.Empty;
+                    textBoxQuantity.Text = string.Empty;
+                    textBoxSubtotal.Text = string.Empty;
+                    Logger.log.Info($"No selected items in cart.\n {e}");
+                }
+
+                textBoxTotal.Text = ComputeTotalPrice().ToString();
+            }
+            catch (Exception ex)
+            {
+                Logger.log.Error(ex.ToString());
+            }
+        }
+
+        public void EnableAddItemButton(bool value)
+        {
+            AddButton.Enabled = value;
         }
 
         public float ComputeTotalPrice()
         {
-            double total = Purchases.Sum(x => x.PurchaseItem.SubTotal);
+            double total = _purchases.Sum(x => x.PurchaseItem.SubTotal);
             return (float)Math.Round(total, 2);
         }
 
@@ -101,53 +98,12 @@ namespace ShoppingCart.Forms
             }
         }
 
-        private void ItemListView_ItemChecked(object sender, ItemCheckedEventArgs e)
-        {
-            int id = e.Item.SubItems[1].Text.ToInt(-1);
-
-            if (Purchases.Find(x => x.PurchaseItem.ItemId == id) != null || ItemManager.GetById(id).Stocks == 0)
-            {
-                e.Item.Checked = false;
-            }
-        }
-
         private void AddButton_Click(object sender, EventArgs e)
         {
-            if (itemListView.CheckedItems.Count > 0)
-            {
-                using (TransactionScope scope = new TransactionScope())
-                {
-
-                    foreach (ListViewItem listViewItem in itemListView.CheckedItems)
-                    {
-                        Item item = ItemManager.GetById(listViewItem.SubItems[1].Text.ToInt(-1));
-                        PurchaseItem purchaseItem = new PurchaseItem(GenerateID.GetGeneratedID(), Purchase.Id, item.Id, 1, item.Price);
-                        item.Stocks -= 1;
-
-                        if (PurchaseItemManager.Add(purchaseItem) && ItemManager.Update(item))
-                        {
-                            Purchases.Add(new PurchaseDetails(purchaseItem, item));
-                            textBoxTotal.Text = ComputeTotalPrice().ToString();
-                            LoadData();
-                        }
-                        else
-                        {
-                            string caption = "Can't add item(s).";
-                            string message = "Please try again.";
-                            MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                            return;
-                        }
-                    }
-
-                    scope.Complete();
-                }
-            }
-            else
-            {
-                string caption = "No item selected.";
-                string message = "Please select an item to be added in your cart.";
-                MessageBox.Show(message, caption, MessageBoxButtons.OK);
-            }
+            EnableAddItemButton(false);
+            ItemsForm itemsForm = new ItemsForm(_purchases, _purchase);
+            itemsForm.MdiParent = this.ParentForm;
+            itemsForm.Show();
         }
 
         private void UpdateButton_Click(object sender, EventArgs e)
@@ -156,8 +112,8 @@ namespace ShoppingCart.Forms
             {
                 try
                 {
-                    Item item = ItemManager.GetById(cartListView.SelectedItems[0].SubItems[1].Text.ToInt(-1));
-                    PurchaseDetails purchaseDetails = Purchases.Find(x => x.PurchaseItem.ItemId == item.Id);
+                    Item item = _itemManager.GetById(cartListView.SelectedItems[0].SubItems[1].Text.ToInt(-1));
+                    PurchaseDetails purchaseDetails = _purchases.Find(x => x.PurchaseItem.ItemId == item.Id);
 
                     using (TransactionScope scope = new TransactionScope())
                     {
@@ -169,7 +125,7 @@ namespace ShoppingCart.Forms
                             purchaseDetails.PurchaseItem.Quantity = quantity;
                             purchaseDetails.PurchaseItem.SubTotal = quantity * item.Price;
 
-                            if (!PurchaseItemManager.Update(purchaseDetails.PurchaseItem) || !ItemManager.Update(item))
+                            if (!_purchaseItemManager.Update(purchaseDetails.PurchaseItem) || !_itemManager.Update(item))
                             {
                                 string message = "Can't update item.";
                                 string caption = "Please try again.";
@@ -186,6 +142,13 @@ namespace ShoppingCart.Forms
 
                         textBoxTotal.Text = ComputeTotalPrice().ToString();
                         LoadData();
+                        ItemsForm itemsForm = Application.OpenForms.OfType<ItemsForm>().FirstOrDefault();
+
+                        if (itemsForm != null)
+                        {
+                            itemsForm.LoadData();
+                        }
+
                         scope.Complete();
                     }
                 }
@@ -196,7 +159,7 @@ namespace ShoppingCart.Forms
             }
             else
             {
-                string caption = "";
+                string caption = string.Empty;
                 string message = "Please select an item in your cart.";
                 MessageBox.Show(message, caption, MessageBoxButtons.OK);
             }
@@ -204,93 +167,111 @@ namespace ShoppingCart.Forms
 
         private void RemoveButton_Click(object sender, EventArgs e)
         {
-            if (cartListView.CheckedItems.Count > 0)
+            try
             {
-                List<string> failures = new List<string>();
-
-                foreach (ListViewItem listViewItem in cartListView.CheckedItems)
+                if (cartListView.CheckedItems.Count > 0)
                 {
-                    try
+                    List<string> failures = new List<string>();
+
+                    foreach (ListViewItem listViewItem in cartListView.CheckedItems)
                     {
-                        Item item = ItemManager.GetById(listViewItem.SubItems[1].Text.ToInt(-1));
-                        PurchaseDetails purchaseDetails = Purchases.Find(x => x.PurchaseItem.ItemId == item.Id);
-
-                        int[] ids = { purchaseDetails.PurchaseItem.Id };
-                        List<PurchaseItem> purchaseItem = new List<PurchaseItem>() { new PurchaseItem(ids[0], -1, -1, -1, -1) };
-                        item.Stocks += purchaseDetails.PurchaseItem.Quantity;
-
-                        if (PurchaseItemManager.Delete(purchaseItem) && ItemManager.Update(item))
+                        using (TransactionScope scope = new TransactionScope())
                         {
-                            Purchases.Remove(purchaseDetails);
-                            textBoxTotal.Text = ComputeTotalPrice().ToString();
-                            LoadData();
-                        }
-                        else
-                        {
-                            failures.Add(item.Name);
+                            Item item = _itemManager.GetById(listViewItem.SubItems[1].Text.ToInt(-1));
+                            PurchaseDetails purchaseDetails = _purchases.Find(x => x.PurchaseItem.ItemId == item.Id);
+
+                            int[] id = { purchaseDetails.PurchaseItem.Id };
+                            List<PurchaseItem> purchaseItem = new List<PurchaseItem>() { new PurchaseItem { Id = id[0] } };
+                            item.Stocks += purchaseDetails.PurchaseItem.Quantity;
+
+                            if (_purchaseItemManager.Delete(purchaseItem) && _itemManager.Update(item))
+                            {
+                                _purchases.Remove(purchaseDetails);
+                                textBoxTotal.Text = ComputeTotalPrice().ToString();
+                                ItemsForm itemsForm = Application.OpenForms.OfType<ItemsForm>().FirstOrDefault();
+
+                                if (itemsForm != null)
+                                {
+                                    itemsForm.LoadData();
+                                }
+
+                                scope.Complete();
+                                LoadData();
+                            }
+                            else
+                            {
+                                failures.Add(item.Name);
+                            }
                         }
                     }
-                    catch (Exception ex)
+
+                    if (failures.Count > 0)
                     {
-                        Logger.log.Error(ex.ToString());
+                        string items = string.Empty;
+
+                        foreach (string failure in failures)
+                        {
+                            items += $"{items}, {failure}";
+                        }
+
+                        string message = $"Item/s {items} can't be deleted";
+                        string caption = "Please try again.";
+                        MessageBox.Show(message, caption, MessageBoxButtons.OK);
                     }
                 }
-
-                if (failures.Count > 0)
+                else
                 {
-                    string items = "";
-
-                    foreach (string failure in failures)
-                    {
-                        items += $"{items}, {failure}";
-                    }
-
-                    string message = $"Item/s {items} can't be deleted";
-                    string caption = "Please try again.";
+                    string caption = "Error";
+                    string message = "Please toggle the checkbox for the\nitem(s) in your cart to remove.";
                     MessageBox.Show(message, caption, MessageBoxButtons.OK);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                string caption = "Error";
-                string message = "Please toggle the checkbox for the\nitem(s) in your cart to remove.";
-                MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                Logger.log.Error(ex.ToString());
             }
         }
 
         private void CheckoutButton_Click(object sender, EventArgs e)
         {
-            using (TransactionScope scope = new TransactionScope())
+            try
             {
-                if (ComputeTotalPrice() > 0)
+                using (TransactionScope scope = new TransactionScope())
                 {
-                    Purchase.Status = "Purchased";
-                    Purchase.Date = DateTime.Now.ToString();
-                    Purchase.Total = ComputeTotalPrice();
-
-                    if (PurchaseManager.Update(Purchase))
+                    if (ComputeTotalPrice() > 0)
                     {
-                        string caption = "Success";
-                        string message = "Thank you. Please come again.";
-                        MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                        this.Close();
+                        _purchase.Status = "Purchased";
+                        _purchase.Date = DateTime.Now.ToString();
+                        _purchase.Total = ComputeTotalPrice();
+
+                        if (_purchaseManager.Update(_purchase))
+                        {
+                            string caption = "Success";
+                            string message = "Thank you. Please come again.";
+                            MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                            this.Close();
+                        }
+                        else
+                        {
+                            string caption = "Can't proceed.";
+                            string message = "Please try again.";
+                            MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                            return;
+                        }
                     }
                     else
                     {
-                        string caption = "Can't proceed.";
-                        string message = "Please try again.";
+                        string message = "Please add items to your cart.";
+                        string caption = "Empty cart";
                         MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                        return;
                     }
-                }
-                else
-                {
-                    string message = "Please add items to your cart.";
-                    string caption = "Empty cart";
-                    MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                }
 
-                scope.Complete();
+                    scope.Complete();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.log.Error(ex.ToString());
             }
         }
 
@@ -298,17 +279,29 @@ namespace ShoppingCart.Forms
         {
             if (ComputeTotalPrice() <= 0)
             {
-                List<Purchase> purchases = new List<Purchase>() { new Purchase(Purchase.Id, -1, null, null, -1) };
+                List<Purchase> purchases = new List<Purchase>() { new Purchase { Id = _purchase.Id} };
 
-                if (!PurchaseManager.Delete(purchases))
+                if (!_purchaseManager.Delete(purchases))
                 {
-                    Logger.log.Error($"A pending purchase with id {Purchase.Id} can't be deleted.");
+                    Logger.log.Error($"A pending purchase with id {_purchase.Id} can't be deleted.");
                 }
             }
 
-            IForm profileForm = Application.OpenForms.OfType<ProfileForm>().FirstOrDefault();
-            ((ProfileForm)profileForm).LoadData();
-            ((ProfileForm)profileForm).EnableNewPurchaseButton(true);
+            ItemsForm itemsForm = Application.OpenForms.OfType<ItemsForm>().FirstOrDefault();
+            
+            if(itemsForm != null)
+            {
+                itemsForm.Close();
+            }
+
+            ProfileForm profileForm = Application.OpenForms.OfType<ProfileForm>().FirstOrDefault();
+            profileForm.LoadData();
+            profileForm.EnableNewPurchaseButton(true);
+        }
+
+        private void CartForm_Load(object sender, EventArgs e)
+        {
+            LoadData();
         }
     }
 }

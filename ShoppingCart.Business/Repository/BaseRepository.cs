@@ -48,6 +48,11 @@ namespace ShoppingCart.Business.Repository
 
                 foreach (PropertyInfo property in properties)
                 {
+                    if (Table.Equals("Item") && property.Name.Equals("Id"))
+                    {
+                        continue;
+                    }
+
                     fieldList.Add(property.Name);
                     valueList.Add($"@{property.Name}");
                 }

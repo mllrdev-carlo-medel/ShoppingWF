@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShoppingCart.Helper
+namespace ShoppingCart.Extensions
 {
-    public static class GenerateID
+    public static class PrimaryId
     {
         public static int GetGeneratedID()
         {

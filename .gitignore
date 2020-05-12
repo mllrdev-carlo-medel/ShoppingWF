@@ -1,0 +1,11 @@
+#files
+.suo
+*.suo
+*.exe
+*.pdb
+
+#directories
+.vs/
+Debug/
+Release/
+Releases/

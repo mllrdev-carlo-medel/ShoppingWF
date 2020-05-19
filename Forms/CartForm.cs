@@ -9,6 +9,7 @@ using ShoppingCart.Business.Log;
 using System.Linq;
 using System.Windows.Forms;
 using System.Transactions;
+using ShoppingCart.Constants;
 
 namespace ShoppingCart.Forms
 {
@@ -188,15 +189,7 @@ namespace ShoppingCart.Forms
                             {
                                 _purchases.Remove(purchaseDetails);
                                 textBoxTotal.Text = ComputeTotalPrice().ToString();
-                                ItemsForm itemsForm = Application.OpenForms.OfType<ItemsForm>().FirstOrDefault();
-
-                                if (itemsForm != null)
-                                {
-                                    itemsForm.LoadData();
-                                }
-
                                 scope.Complete();
-                                LoadData();
                             }
                             else
                             {
@@ -204,6 +197,15 @@ namespace ShoppingCart.Forms
                             }
                         }
                     }
+
+                    ItemsForm itemsForm = Application.OpenForms.OfType<ItemsForm>().FirstOrDefault();
+
+                    if (itemsForm != null)
+                    {
+                        itemsForm.LoadData();
+                    }
+
+                    LoadData();
 
                     if (failures.Count > 0)
                     {
@@ -240,7 +242,7 @@ namespace ShoppingCart.Forms
                 {
                     if (ComputeTotalPrice() > 0)
                     {
-                        _purchase.Status = "Purchased";
+                        _purchase.Status = ProfileStringConstants.PURCHASED;
                         _purchase.Date = DateTime.Now.ToString();
                         _purchase.Total = ComputeTotalPrice();
 

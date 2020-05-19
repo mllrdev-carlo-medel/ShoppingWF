@@ -22,3 +22,5 @@ D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.MainForm.res
 D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.CustomerForm.resources
 D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.ItemsForm.resources
 D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.ItemPromptForm.resources
+D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.AddItemsForm.resources
+D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.PurchaseHistoryForm.resources

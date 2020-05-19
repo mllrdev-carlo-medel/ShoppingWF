@@ -11,5 +11,6 @@ namespace ShoppingCart.Constants
         public const string SAVE_BUTTON = "SAVE";
         public const string EDIT_PROFILE = "EDIT PROFILE";
         public const string PENDING = "PENDING";
+        public const string PURCHASED = "PURCHASED";
     }
 }

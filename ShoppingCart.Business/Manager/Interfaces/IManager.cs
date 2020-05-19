@@ -5,7 +5,7 @@ namespace ShoppingCart.Business.Manager.Interfaces
     public interface IManager<T>
     {
         List<T> GetAll();
-        bool Add(T data);
+        int Add(T data);
         T GetById(int id);
         List<T> GetAllWhere(T data);
         bool Update(T data);

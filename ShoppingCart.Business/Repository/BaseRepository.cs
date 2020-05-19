@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Reflection;
 using Dapper;
 using System.Transactions;
+using Dapper.Contrib.Extensions;
 
 namespace ShoppingCart.Business.Repository
 {
@@ -38,7 +39,7 @@ namespace ShoppingCart.Business.Repository
             }
         }
 
-        public bool Add(T data)
+        public int Add(T data)
         {
             try
             {
@@ -48,7 +49,7 @@ namespace ShoppingCart.Business.Repository
 
                 foreach (PropertyInfo property in properties)
                 {
-                    if (Table.Equals("Item") && property.Name.Equals("Id"))
+                    if (property.Name.Equals("Id"))
                     {
                         continue;
                     }
@@ -59,15 +60,14 @@ namespace ShoppingCart.Business.Repository
 
                 string field = string.Join(", ", fieldList);
                 string value = string.Join(", ", valueList);
+                string query = $"INSERT INTO {Table} ({field}) VALUES ({value}); SELECT CAST(SCOPE_IDENTITY() as int)";
 
-                string query = $"INSERT INTO {Table} ({field}) VALUES ({value})";
-
-                return Connection.Execute(query, data) == 1;
+                return Connection.Query<int>(query, data).Single();
             }
             catch (Exception ex)
             {
                 Logger.log.Error(ex.StackTrace);
-                return false;
+                return -1;
             }
         }
 

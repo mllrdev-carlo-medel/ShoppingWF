@@ -9,3 +9,5 @@
 Debug/
 Release/
 Releases/
+bin/
+obj/

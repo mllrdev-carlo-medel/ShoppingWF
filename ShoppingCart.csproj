@@ -52,6 +52,12 @@
   <ItemGroup>
     <Compile Include="Constants\ProfileStringConstants.cs" />
     <Compile Include="Factory\CustomerFactory.cs" />
+    <Compile Include="Forms\AddItemsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddItemsForm.Designer.cs">
+      <DependentUpon>AddItemsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\CartForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,19 +94,27 @@
     <Compile Include="Forms\ProfileForm.Designer.cs">
       <DependentUpon>ProfileForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\PurchaseHistoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PurchaseHistoryForm.Designer.cs">
+      <DependentUpon>PurchaseHistoryForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\SignUpForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\SignUpForm.Designer.cs">
       <DependentUpon>SignUpForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helper\PrimaryId.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Model\CustomerDetails.cs" />
     <Compile Include="Model\PurchaseDetails.cs" />
     <Compile Include="Model\PurchaseHistory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\AddItemsForm.resx">
+      <DependentUpon>AddItemsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CartForm.resx">
       <DependentUpon>CartForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -118,6 +132,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProfileForm.resx">
       <DependentUpon>ProfileForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PurchaseHistoryForm.resx">
+      <DependentUpon>PurchaseHistoryForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SignUpForm.resx">
       <DependentUpon>SignUpForm.cs</DependentUpon>

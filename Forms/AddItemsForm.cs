@@ -1,34 +1,29 @@
-﻿using System;
-using ShoppingCart.Business.Entity;
-using System.Windows.Forms;
+﻿using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
-using ShoppingCart.Business.Manager;
+using System;
 using System.Collections.Generic;
-using ShoppingCart.Business.Model;
-using System.Transactions;
-using ShoppingCart.Extensions;
-using System.Linq;
-using ShoppingCart.Business.Log;
+using ShoppingCart.Business.Entity;
 using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using ShoppingCart.Business.Model;
+using ShoppingCart.Business.Log;
+using ShoppingCart.Extensions;
+using System.Transactions;
 
 namespace ShoppingCart.Forms
 {
-    public partial class ItemsForm : Form
+    public partial class AddItemsForm : Form
     {
         private readonly IManager<Item> _itemManager = new ItemManager();
         private readonly IManager<PurchaseItem> _purchaseItemManager = new PurchaseItemManager();
 
-        private readonly List<PurchaseDetails> _purchases;
-        private readonly Purchase _purchase;
-
-        public ItemsForm(List<PurchaseDetails> purchaseDetails, Purchase purchase)
+        public AddItemsForm()
         {
             InitializeComponent();
-            _purchases = purchaseDetails;
-            _purchase = purchase;
         }
 
-        private void ItemsForm_Load(object sender, EventArgs e)
+        private void AddItemForm_Load(object sender, EventArgs e)
         {
             LoadData();
         }
@@ -42,21 +37,17 @@ namespace ShoppingCart.Forms
 
                 foreach (Item item in _itemManager.GetAll())
                 {
-                    if (item.Stocks > 0)
-                    {
-                        ListViewItem listViewItem = new ListViewItem(new[] {string.Empty,
+                    ListViewItem listViewItem = new ListViewItem(new[] {string.Empty,
                                                                         item.Id.ToString(),
                                                                         item.Name,
                                                                         item.Price.ToString(),
                                                                         item.Stocks.ToString()});
-
-                        if (_purchases.Find(x => x.PurchaseItem.ItemId == item.Id) != null)
-                        {
-                            listViewItem.BackColor = Color.Green;
-                        }
-
-                        listViewItems.Add(listViewItem);
+                    if (item.Stocks == 0)
+                    {
+                        listViewItem.BackColor = Color.Red;
                     }
+
+                    listViewItems.Add(listViewItem);
                 }
 
                 itemListView.Items.AddRange(listViewItems.ToArray());
@@ -67,44 +58,29 @@ namespace ShoppingCart.Forms
             }
         }
 
-        private void AddToCartButton_Click(object sender, EventArgs e)
+        private void ItemListView_DoubleClick(object sender, System.EventArgs e)
         {
             try
             {
-                if (itemListView.CheckedItems.Count > 0)
+                if (itemListView.SelectedItems.Count > 0)
                 {
-                    using (TransactionScope scope = new TransactionScope())
+                    int id = itemListView.SelectedItems[0].SubItems[1].Text.ToInt(-1);
+                    Item item = _itemManager.GetById(id);
+                    Item returnedItem = ShowDialogNewItem(item);
+
+                    if (returnedItem != null)
                     {
-                        foreach (ListViewItem listViewItem in itemListView.CheckedItems)
+                        if (_itemManager.Update(item))
                         {
-                            Item item = _itemManager.GetById(listViewItem.SubItems[1].Text.ToInt(-1));
-                            PurchaseItem purchaseItem = new PurchaseItem { PurchaseId = _purchase.Id, ItemId = item.Id, Quantity = 1, SubTotal = item.Price };
-                            item.Stocks -= 1;
-
-                            if ((purchaseItem.Id = _purchaseItemManager.Add(purchaseItem)) > 0 && _itemManager.Update(item))
-                            {
-                                _purchases.Add(new PurchaseDetails(purchaseItem, item));
-                                LoadData();
-                                CartForm cartForm = Application.OpenForms.OfType<CartForm>().FirstOrDefault();
-                                cartForm.LoadData();
-                            }
-                            else
-                            {
-                                string caption = "Can't add item(s).";
-                                string message = "Please try again.";
-                                MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                                return;
-                            }
+                            LoadData();
                         }
-
-                        scope.Complete();
+                        else
+                        {
+                            string caption = "Error.";
+                            string message = $"Can't update item {item.Name}.";
+                            MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                        }
                     }
-                }
-                else
-                {
-                    string caption = "No item selected.";
-                    string message = "Please select an item to be added in your cart.";
-                    MessageBox.Show(message, caption, MessageBoxButtons.OK);
                 }
             }
             catch (Exception ex)
@@ -113,15 +89,25 @@ namespace ShoppingCart.Forms
             }
         }
 
-        private void ItemListView_ItemChecked(object sender, ItemCheckedEventArgs e)
+        private void AddItemButton_Click(object sender, EventArgs e)
         {
             try
             {
-                int id = e.Item.SubItems[1].Text.ToInt(-1);
+                Item item = new Item();
+                Item returnedItem = ShowDialogNewItem(item);
 
-                if (_purchases.Find(x => x.PurchaseItem.ItemId == id) != null || _itemManager.GetById(id).Stocks == 0)
+                if (returnedItem != null)
                 {
-                    e.Item.Checked = false;
+                    if (_itemManager.Add(returnedItem) > 0)
+                    {
+                        LoadData();
+                    }
+                    else
+                    {
+                        string caption = "Error.";
+                        string message = "Can't add item. Please try again.";
+                        MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                    }
                 }
             }
             catch (Exception ex)
@@ -164,13 +150,13 @@ namespace ShoppingCart.Forms
                                                                         item.Name,
                                                                         item.Price.ToString(),
                                                                         item.Stocks.ToString()});
-
-                        if (_purchases.Find(x => x.PurchaseItem.ItemId == item.Id) != null)
+                        if (item.Stocks == 0)
                         {
-                            listViewItem.BackColor = Color.Green;
+                            listViewItem.BackColor = Color.Red;
                         }
 
                         listViewItems.Add(listViewItem);
+
                     }
 
                     if (listViewItems.Count > 0)
@@ -199,11 +185,9 @@ namespace ShoppingCart.Forms
             LoadData();
         }
 
-        private void ItemsForm_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void AddItemsForm_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            CartForm cartForm = Application.OpenForms.OfType<CartForm>().FirstOrDefault();
-            cartForm.LoadData();
-            cartForm.EnableAddItemButton(true);
+
         }
     }
 }

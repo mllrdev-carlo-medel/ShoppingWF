@@ -2,7 +2,7 @@
 
 namespace ShoppingCart.Forms
 {
-    partial class LogInForm
+    partial class CustomerForm
     {
         /// <summary>
         /// Required designer variable.
@@ -40,8 +40,12 @@ namespace ShoppingCart.Forms
             this.id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.address = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.textBoxSearch = new System.Windows.Forms.TextBox();
+            this.textBoxSearchName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBoxSearchAddress = new System.Windows.Forms.TextBox();
+            this.searchButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // membershipIdLabel
@@ -60,24 +64,24 @@ namespace ShoppingCart.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMemberId.Location = new System.Drawing.Point(120, 409);
             this.textBoxMemberId.Name = "textBoxMemberId";
-            this.textBoxMemberId.Size = new System.Drawing.Size(171, 22);
+            this.textBoxMemberId.Size = new System.Drawing.Size(427, 22);
             this.textBoxMemberId.TabIndex = 2;
             // 
             // confirmButton
             // 
             this.confirmButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.confirmButton.Location = new System.Drawing.Point(297, 406);
+            this.confirmButton.Location = new System.Drawing.Point(553, 406);
             this.confirmButton.Name = "confirmButton";
             this.confirmButton.Size = new System.Drawing.Size(105, 27);
             this.confirmButton.TabIndex = 3;
-            this.confirmButton.Text = "Log In";
+            this.confirmButton.Text = "Confirm";
             this.confirmButton.UseVisualStyleBackColor = true;
             this.confirmButton.Click += new System.EventHandler(this.ConfirmButton_Click);
             // 
             // signUpButton
             // 
             this.signUpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.signUpButton.Location = new System.Drawing.Point(408, 406);
+            this.signUpButton.Location = new System.Drawing.Point(664, 406);
             this.signUpButton.Name = "signUpButton";
             this.signUpButton.Size = new System.Drawing.Size(102, 27);
             this.signUpButton.TabIndex = 4;
@@ -97,16 +101,16 @@ namespace ShoppingCart.Forms
             this.customerListView.FullRowSelect = true;
             this.customerListView.GridLines = true;
             this.customerListView.HideSelection = false;
-            this.customerListView.Location = new System.Drawing.Point(12, 39);
+            this.customerListView.Location = new System.Drawing.Point(12, 73);
             this.customerListView.MultiSelect = false;
             this.customerListView.Name = "customerListView";
-            this.customerListView.Size = new System.Drawing.Size(498, 361);
+            this.customerListView.Size = new System.Drawing.Size(754, 327);
             this.customerListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.customerListView.TabIndex = 5;
             this.customerListView.UseCompatibleStateImageBehavior = false;
             this.customerListView.View = System.Windows.Forms.View.Details;
             this.customerListView.Click += new System.EventHandler(this.CustomerListView_Click);
-            //
+            // 
             // id
             // 
             this.id.Text = "Id";
@@ -120,42 +124,86 @@ namespace ShoppingCart.Forms
             // address
             // 
             this.address.Text = "Address";
-            this.address.Width = 174;
+            this.address.Width = 250;
             // 
-            // textBoxSearch
+            // textBoxSearchName
             // 
-            this.textBoxSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxSearchName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxSearch.Location = new System.Drawing.Point(71, 11);
-            this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(439, 22);
-            this.textBoxSearch.TabIndex = 6;
-            this.textBoxSearch.TextChanged += new System.EventHandler(this.TextBoxSearch_TextChanged);
+            this.textBoxSearchName.Location = new System.Drawing.Point(135, 11);
+            this.textBoxSearchName.Name = "textBoxSearchName";
+            this.textBoxSearchName.Size = new System.Drawing.Size(523, 22);
+            this.textBoxSearchName.TabIndex = 6;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(53, 17);
+            this.label1.Size = new System.Drawing.Size(94, 17);
             this.label1.TabIndex = 7;
-            this.label1.Text = "Search";
+            this.label1.Text = "Search Name";
             // 
-            // LogInForm
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 37);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(109, 17);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Search Address";
+            // 
+            // textBoxSearchAddress
+            // 
+            this.textBoxSearchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxSearchAddress.Location = new System.Drawing.Point(135, 37);
+            this.textBoxSearchAddress.Name = "textBoxSearchAddress";
+            this.textBoxSearchAddress.Size = new System.Drawing.Size(523, 22);
+            this.textBoxSearchAddress.TabIndex = 9;
+            // 
+            // searchButton
+            // 
+            this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.searchButton.Location = new System.Drawing.Point(664, 9);
+            this.searchButton.Name = "searchButton";
+            this.searchButton.Size = new System.Drawing.Size(101, 26);
+            this.searchButton.TabIndex = 10;
+            this.searchButton.Text = "Search";
+            this.searchButton.UseVisualStyleBackColor = true;
+            this.searchButton.Click += new System.EventHandler(this.SearchButton_Click);
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Location = new System.Drawing.Point(664, 36);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(101, 25);
+            this.cancelButton.TabIndex = 11;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
+            // 
+            // CustomerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(522, 443);
+            this.ClientSize = new System.Drawing.Size(778, 443);
+            this.Controls.Add(this.cancelButton);
+            this.Controls.Add(this.searchButton);
+            this.Controls.Add(this.textBoxSearchAddress);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBoxSearch);
+            this.Controls.Add(this.textBoxSearchName);
             this.Controls.Add(this.customerListView);
             this.Controls.Add(this.signUpButton);
             this.Controls.Add(this.confirmButton);
             this.Controls.Add(this.textBoxMemberId);
             this.Controls.Add(this.membershipIdLabel);
             this.MinimumSize = new System.Drawing.Size(540, 490);
-            this.Name = "LogInForm";
-            this.Text = "Log In";
+            this.Name = "CustomerForm";
+            this.Text = "Customer";
+            this.Load += new System.EventHandler(this.CustomerForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -167,11 +215,14 @@ namespace ShoppingCart.Forms
         private System.Windows.Forms.Button confirmButton;
         private System.Windows.Forms.Button signUpButton;
         private System.Windows.Forms.ListView customerListView;
-        private System.Windows.Forms.TextBox textBoxSearch;
+        private System.Windows.Forms.TextBox textBoxSearchName;
         private System.Windows.Forms.ColumnHeader id;
         private System.Windows.Forms.ColumnHeader name;
         private System.Windows.Forms.ColumnHeader address;
         private System.Windows.Forms.Label label1;
-        
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxSearchAddress;
+        private System.Windows.Forms.Button searchButton;
+        private System.Windows.Forms.Button cancelButton;
     }
 }

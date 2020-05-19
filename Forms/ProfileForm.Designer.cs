@@ -203,7 +203,7 @@
             this.historyListView.TabIndex = 17;
             this.historyListView.UseCompatibleStateImageBehavior = false;
             this.historyListView.View = System.Windows.Forms.View.Details;
-            this.historyListView.SelectedIndexChanged += new System.EventHandler(this.historyListView_SelectedIndexChanged);
+            this.historyListView.SelectedIndexChanged += new System.EventHandler(this.HistoryListView_SelectedIndexChanged);
             // 
             // id
             // 
@@ -276,10 +276,10 @@
             // 
             // EditProfileButton
             // 
-            this.EditProfileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.EditProfileButton.Location = new System.Drawing.Point(15, 492);
+            this.EditProfileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.EditProfileButton.Location = new System.Drawing.Point(585, 61);
             this.EditProfileButton.Name = "EditProfileButton";
-            this.EditProfileButton.Size = new System.Drawing.Size(140, 27);
+            this.EditProfileButton.Size = new System.Drawing.Size(184, 27);
             this.EditProfileButton.TabIndex = 19;
             this.EditProfileButton.Text = "Edit Profile";
             this.EditProfileButton.UseVisualStyleBackColor = true;
@@ -322,6 +322,7 @@
             this.Name = "ProfileForm";
             this.Text = "Profile";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProfileForm_FormClosing);
+            this.Load += new System.EventHandler(this.ProfileForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

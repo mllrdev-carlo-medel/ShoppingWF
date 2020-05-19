@@ -15,8 +15,10 @@ D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.pdb
 D:\Visual Studio\Projects\ShoppingCart\bin\Debug\Dapper.dll
 D:\Visual Studio\Projects\ShoppingCart\bin\Debug\Dapper.xml
 D:\Visual Studio\Projects\ShoppingCart\bin\Debug\Config\log4net.config
-D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.LogInForm.resources
 D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.ProfileForm.resources
 D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.SignUpForm.resources
 D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.CartForm.resources
 D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.MainForm.resources
+D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.CustomerForm.resources
+D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.ItemsForm.resources
+D:\Visual Studio\Projects\ShoppingCart\obj\Debug\ShoppingCart.Forms.ItemPromptForm.resources

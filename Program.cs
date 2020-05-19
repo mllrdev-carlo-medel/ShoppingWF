@@ -5,7 +5,8 @@ using System.Windows.Forms;
 using ShoppingCart.Business.Log;
 using log4net.Config;
 using ShoppingCart.Forms;
-using ShoppingCart.Forms.Interfaces;
+using ShoppingCart.Constants;
+using ShoppingCart.Extensions;
 
 namespace ShoppingCart
 {
@@ -18,8 +19,8 @@ namespace ShoppingCart
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            IForm mainForm = new MainForm();
-            Application.Run((MainForm)mainForm);
+            MainForm mainForm = new MainForm();
+            Application.Run(mainForm);
         }
     }
 }

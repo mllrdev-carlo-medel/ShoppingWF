@@ -1,5 +1,4 @@
-﻿using ShoppingCart.Forms.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,7 +10,7 @@ using System.Windows.Forms;
 
 namespace ShoppingCart.Forms
 {
-    public partial class MainForm : Form, IMainForm
+    public partial class MainForm : Form
     {
         public MainForm()
         {
@@ -20,12 +19,12 @@ namespace ShoppingCart.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            IForm logInForm = new LogInForm();
-            ((LogInForm)logInForm).Dock = DockStyle.Right;
-            ((LogInForm)logInForm).MdiParent = this;
-            ((LogInForm)logInForm).TopLevel = false;
-            ((LogInForm)logInForm).Disposed += ChildForm_Disposed;
-            ((LogInForm)logInForm).Show();
+            CustomerForm customerForm = new CustomerForm();
+            customerForm.Dock = DockStyle.Right;
+            customerForm.MdiParent = this;
+            customerForm.TopLevel = false;
+            customerForm.Disposed += ChildForm_Disposed;
+            customerForm.Show();
         }
 
         public void ChildForm_Disposed(object sender, EventArgs e)

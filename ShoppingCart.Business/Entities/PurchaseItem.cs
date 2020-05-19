@@ -8,11 +8,11 @@ namespace ShoppingCart.Business.Entity
 {
     public class PurchaseItem
     {
-        public int Id { get; set; }
-        public int PurchaseId { get; set; }
-        public int ItemId { get; set; }
-        public int Quantity { get; set; }
-        public float SubTotal { get; set; }
+        public int Id { get; set; } = -1;
+        public int PurchaseId { get; set; } = -1;
+        public int ItemId { get; set; } = -1;
+        public int Quantity { get; set; } = -1;
+        public float SubTotal { get; set; } = -1;
 
         public PurchaseItem()
         {

@@ -3,8 +3,9 @@ using ShoppingCart.Business.Log;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Business.Model;
-using ShoppingCart.Forms.Interfaces;
-using ShoppingCart.Helper;
+using ShoppingCart.Constants;
+using ShoppingCart.Factory;
+using ShoppingCart.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,65 +15,61 @@ using System.Windows.Forms;
 
 namespace ShoppingCart.Forms
 {
-    public partial class ProfileForm : Form, IProfileForm
+    public partial class ProfileForm : Form
     {
-        private readonly string saveButton = "Save";
-        private readonly string editButton = "Edit Profile";
-        private readonly string pending = "Pending";
+        private readonly int _id;
+        private readonly IManager<Customer> _customerManager = new CustomerManager();
+        private readonly IManager<Item> _itemManager = new ItemManager();
+        private readonly IManager<PurchaseItem> _purchaseItemManager = new PurchaseItemManager();
+        private readonly IManager<Purchase> _purchaseManager = new PurchaseManager();
 
-        private int Id { get; }
-        private IManager<Customer> CustomerManager { get; } = new CustomerManager();
-        private IManager<Item> ItemManager { get; } = new ItemManager();
-        private IManager<PurchaseItem> PurchaseItemManager { get; } = new PurchaseItemManager();
-        private IManager<Purchase> PurchaseManager { get; } = new PurchaseManager();
-
-        private CustomerDetails Customer { get; set; }
+        private CustomerDetails _customer;
 
         public ProfileForm(int id)
         {
             InitializeComponent();
-            Id = id;
-            LoadData();
+            _id = id;
         }
-
+  
         public void LoadData()
         {
-            Customer = new CustomerDetails(CustomerManager.GetById(Id));
-            textBoxName.Text = $"{Customer.Info.FirstName} {Customer.Info.MiddleName} {Customer.Info.LastName}";
-            textBoxAddress.Text = $"{Customer.Info.Address}";
-            textBoxGender.Text = $"{Customer.Info.Gender}";
-            textBoxPhone.Text = $"{Customer.Info.ContactNo}";
-            textBoxEmail.Text = $"{Customer.Info.Email}";
-
-            Customer.PurchaseHistory.Clear();
-            historyListView.Items.Clear();
-            itemListView.Items.Clear();
-
-            Purchase conditionPurchase = new Purchase(-1, Customer.Info.Id, null, null, -1);
-            PurchaseItem conditionPurchaseItem = new PurchaseItem(-1, -1, -1, -1, -1);
-
-            foreach (Purchase purchase in PurchaseManager.GetAllWhere(conditionPurchase))
+            try
             {
-                Customer.PurchaseHistory.Add(new PurchaseHistory(purchase));
-            }
+                _customer = CustomerFactory.GetCustomer(_id);
 
-            foreach (PurchaseHistory purchaseHistory in Customer.PurchaseHistory)
-            {
-                conditionPurchaseItem.PurchaseId = purchaseHistory.Purchase.Id;
-
-                foreach (PurchaseItem purchaseItem in PurchaseItemManager.GetAllWhere(conditionPurchaseItem))
+                if (_customer == null)
                 {
-                    purchaseHistory.PurchaseDetails.Add(new PurchaseDetails(purchaseItem, ItemManager.GetById(purchaseItem.ItemId)));
+                    string message = "Can't find the customer details.";
+                    string caption = "Error.";
+                    MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                    this.Close();
                 }
-            }
 
-            foreach (PurchaseHistory purchaseHistory in Customer.PurchaseHistory.OrderByDescending (x => DateTime.Parse(x.Purchase.Date)))
+                textBoxName.Text = $"{_customer.Info.FirstName} {_customer.Info.MiddleName} {_customer.Info.LastName}";
+                textBoxAddress.Text = $"{_customer.Info.Address}";
+                textBoxGender.Text = $"{_customer.Info.Gender}";
+                textBoxPhone.Text = $"{_customer.Info.ContactNo}";
+                textBoxEmail.Text = $"{_customer.Info.Email}";
+
+                historyListView.Items.Clear();
+                itemListView.Items.Clear();
+
+                List<ListViewItem> listViewItems = new List<ListViewItem>();
+
+                foreach (PurchaseHistory purchaseHistory in _customer.PurchaseHistory.OrderByDescending(x => DateTime.Parse(x.Purchase.Date)))
+                {
+                    listViewItems.Add(new ListViewItem(new[] { purchaseHistory.Purchase.Id.ToString(),
+                                                          purchaseHistory.Purchase.CustomerId.ToString(),
+                                                          purchaseHistory.Purchase.Status,
+                                                          purchaseHistory.Purchase.Date,
+                                                          purchaseHistory.Purchase.Total.ToString()}));
+                }
+
+                historyListView.Items.AddRange(listViewItems.ToArray());
+            }
+            catch (Exception ex)
             {
-               historyListView.Items.Add(new ListViewItem(new[] { purchaseHistory.Purchase.Id.ToString(),
-                                                                  purchaseHistory.Purchase.CustomerId.ToString(),
-                                                                  purchaseHistory.Purchase.Status,
-                                                                  purchaseHistory.Purchase.Date,
-                                                                  purchaseHistory.Purchase.Total.ToString()}));
+                Logger.log.Error(ex.ToString());
             }
         }
 
@@ -82,22 +79,25 @@ namespace ShoppingCart.Forms
             deleteButton.Enabled = value;
         }
 
-        private void historyListView_SelectedIndexChanged(object sender, EventArgs e)
+        private void HistoryListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
                 int id = historyListView.SelectedItems[0].Text.ToInt(-1);
                 itemListView.Items.Clear();
-                PurchaseHistory purchaseHistory = Customer.PurchaseHistory.Find(x => x.Purchase.Id == id);
+                List<ListViewItem> listViewItems = new List<ListViewItem>();
+                PurchaseHistory purchaseHistory = _customer.PurchaseHistory.Find(x => x.Purchase.Id == id);
 
                 foreach (PurchaseDetails purchaseDetails in purchaseHistory.PurchaseDetails)
                 {
-                    itemListView.Items.Add(new ListViewItem(new[] { purchaseDetails.PurchaseItem.ItemId.ToString(),
-                                                                    purchaseDetails.Name,
-                                                                    purchaseDetails.Price.ToString(),
-                                                                    purchaseDetails.PurchaseItem.Quantity.ToString(),
-                                                                    purchaseDetails.PurchaseItem.SubTotal.ToString()}));
+                    listViewItems.Add(new ListViewItem(new[] { purchaseDetails.PurchaseItem.ItemId.ToString(),
+                                                               purchaseDetails.Name,
+                                                               purchaseDetails.Price.ToString(),
+                                                               purchaseDetails.PurchaseItem.Quantity.ToString(),
+                                                               purchaseDetails.PurchaseItem.SubTotal.ToString()}));
                 }
+
+                itemListView.Items.AddRange(listViewItems.ToArray());
             }
             catch (Exception ex)
             {
@@ -108,207 +108,228 @@ namespace ShoppingCart.Forms
 
         private void NewPurchaseButton_Click(object sender, EventArgs e)
         {
-            PurchaseHistory purchaseHistory = Customer.PurchaseHistory.Find(x => x.Purchase.Status == pending);
-            Purchase purchase;
-
-            if (purchaseHistory == null)
+            try
             {
-                purchase = new Purchase(GenerateID.GetGeneratedID(), Customer.Info.Id, pending, DateTime.Now.ToString(), 0);
-               
-                if (PurchaseManager.Add(purchase))
+                PurchaseHistory purchaseHistory = _customer.PurchaseHistory.Find(x => x.Purchase.Status == ProfileStringConstants.PENDING.FirstCharToUpper());
+                Purchase purchase;
+
+                if (purchaseHistory == null)
                 {
-                    LoadData();
-                    EnableNewPurchaseButton(false);
-                    IForm cartForm = new CartForm(Customer.PurchaseHistory.Find(x => x.Purchase.Id == purchase.Id).PurchaseDetails, purchase);
-                    ((CartForm)cartForm).MdiParent = this.ParentForm;
-                    ((CartForm)cartForm).Show();
-                }
-                else
-                {
-                    string message = "Can't create new purchase.";
-                    string caption = "Please try again.";
-                    MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                }
-            }
-            else
-            {
-                string message = "You have a pending purchase. Would you like to restore it? Selecting no will delete that purchase.";
-                string caption = "";
-                DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.YesNo);
+                    purchase = new Purchase(PrimaryId.GetGeneratedID(), _customer.Info.Id, ProfileStringConstants.PENDING.FirstCharToUpper(), DateTime.Now.ToString(), 0);
 
-                if (result == DialogResult.Yes)
-                {
-                    purchase = purchaseHistory.Purchase;
-                    EnableNewPurchaseButton(false);
-                    IForm cartForm = new CartForm(purchaseHistory.PurchaseDetails, purchase);
-                    ((CartForm)cartForm).MdiParent = this.ParentForm;
-                    ((CartForm)cartForm).Show();
-                }
-                else
-                {
-                    int[] ids = { purchaseHistory.Purchase.Id };
-                    List<PurchaseItem> purchaseItemDel = new List<PurchaseItem>() { new PurchaseItem(-1, ids[0], -1, -1, -1) };
-                    List<Purchase> purchaseDel = new List<Purchase>() { new Purchase(ids[0], -1, null, null, -1) };
-
-                    List<PurchaseItem> purchaseItems = PurchaseItemManager.GetAllWhere(purchaseItemDel[0]);
-
-                    if (purchaseItems.Count > 0)
-                    {
-                        if (Customer.PurchaseHistory.Find(x => x.Purchase.Id == ids[0]).Purchase.Status == pending)
-                        {
-                            foreach (PurchaseItem purchaseItem in purchaseItems)
-                            {
-                                Item item = ItemManager.GetById(purchaseItem.ItemId);
-                                item.Stocks += purchaseItem.Quantity;
-                                ItemManager.Update(item);
-                            }
-                        }
-
-                        PurchaseItemManager.Delete(purchaseItemDel);
-                    }
-
-                    if (PurchaseManager.Delete(purchaseDel))
+                    if (_purchaseManager.Add(purchase))
                     {
                         LoadData();
-                        purchase = new Purchase(GenerateID.GetGeneratedID(), Customer.Info.Id, pending, DateTime.Now.ToString(), 0);
+                        EnableNewPurchaseButton(false);
+                        CartForm cartForm = new CartForm(_customer.PurchaseHistory.Find(x => x.Purchase.Id == purchase.Id).PurchaseDetails, purchase);
+                        cartForm.MdiParent = this.ParentForm;
+                        cartForm.Show();
+                    }
+                    else
+                    {
+                        string message = "Can't create new purchase.";
+                        string caption = "Please try again.";
+                        MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                    }
+                }
+                else
+                {
+                    string message = "You have a pending purchase. Would you like to restore it? Selecting no will delete that purchase.";
+                    string caption = string.Empty;
+                    DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.YesNo);
 
-                        if (PurchaseManager.Add(purchase))
+                    if (result == DialogResult.Yes)
+                    {
+                        purchase = purchaseHistory.Purchase;
+                        EnableNewPurchaseButton(false);
+                        CartForm cartForm = new CartForm(purchaseHistory.PurchaseDetails, purchase);
+                        cartForm.MdiParent = this.ParentForm;
+                        cartForm.Show();
+                    }
+                    else
+                    {
+                        int[] ids = { purchaseHistory.Purchase.Id };
+                        List<PurchaseItem> purchaseItemDel = new List<PurchaseItem>() { new PurchaseItem { PurchaseId = ids[0] } };
+                        List<Purchase> purchaseDel = new List<Purchase>() { new Purchase { Id = ids[0] } };
+
+                        List<PurchaseItem> purchaseItems = _purchaseItemManager.GetAllWhere(purchaseItemDel[0]);
+
+                        if (purchaseItems.Count > 0)
+                        {
+                            if (_customer.PurchaseHistory.Find(x => x.Purchase.Id == ids[0]).Purchase.Status == ProfileStringConstants.PENDING.FirstCharToUpper())
+                            {
+                                foreach (PurchaseItem purchaseItem in purchaseItems)
+                                {
+                                    Item item = _itemManager.GetById(purchaseItem.ItemId);
+                                    item.Stocks += purchaseItem.Quantity;
+                                    _itemManager.Update(item);
+                                }
+                            }
+
+                            _purchaseItemManager.Delete(purchaseItemDel);
+                        }
+
+                        if (_purchaseManager.Delete(purchaseDel))
                         {
                             LoadData();
-                            EnableNewPurchaseButton(false);
-                            IForm cartForm = new CartForm(Customer.PurchaseHistory.Find(x => x.Purchase.Id == purchase.Id).PurchaseDetails, purchase);
-                            ((CartForm)cartForm).MdiParent = this.ParentForm;
-                            ((CartForm)cartForm).Show();
+                            purchase = new Purchase(PrimaryId.GetGeneratedID(), _customer.Info.Id, ProfileStringConstants.PENDING.FirstCharToUpper(), DateTime.Now.ToString(), 0);
+
+                            if (_purchaseManager.Add(purchase))
+                            {
+                                LoadData();
+                                EnableNewPurchaseButton(false);
+                                CartForm cartForm = new CartForm(_customer.PurchaseHistory.Find(x => x.Purchase.Id == purchase.Id).PurchaseDetails, purchase);
+                                cartForm.MdiParent = this.ParentForm;
+                                cartForm.Show();
+                            }
+                            else
+                            {
+                                message = "Can't create new purchase.";
+                                caption = "Please try again.";
+                                result = MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                            }
                         }
                         else
                         {
-                            message = "Can't create new purchase.";
+                            message = "Can't delete.";
                             caption = "Please try again.";
                             result = MessageBox.Show(message, caption, MessageBoxButtons.OK);
                         }
                     }
-                    else
-                    {
-                        message = "Can't delete.";
-                        caption = "Please try again.";
-                        result = MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.log.Error(ex.ToString());
             }
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            if (historyListView.SelectedItems.Count > 0)
+            try
             {
-                int[] ids = { historyListView.SelectedItems[0].Text.ToInt(-1) };
-
-                if (ids[0] >= 0)
+                if (historyListView.SelectedItems.Count > 0)
                 {
-                    List<PurchaseItem> purchaseItemDel = new List<PurchaseItem>() { new PurchaseItem(-1, ids[0], -1, -1, -1) };
-                    List<Purchase> purchaseDel = new List<Purchase>() { new Purchase(ids[0], -1, null, null, -1) };
+                    int[] ids = { historyListView.SelectedItems[0].Text.ToInt(-1) };
 
-                    using (TransactionScope scope = new TransactionScope())
+                    if (ids[0] >= 0)
                     {
-                        
-                        List<PurchaseItem> purchaseItems = PurchaseItemManager.GetAllWhere(purchaseItemDel[0]);
-                        if (purchaseItems.Count > 0)
+                        List<PurchaseItem> purchaseItemDel = new List<PurchaseItem>() { new PurchaseItem { PurchaseId = ids[0] } };
+                        List<Purchase> purchaseDel = new List<Purchase>() { new Purchase { Id = ids[0] } };
+
+                        using (TransactionScope scope = new TransactionScope())
                         {
-                            if (Customer.PurchaseHistory.Find(x => x.Purchase.Id == ids[0]).Purchase.Status == pending)
+                            List<PurchaseItem> purchaseItems = _purchaseItemManager.GetAllWhere(purchaseItemDel[0]);
+
+                            if (purchaseItems.Count > 0)
                             {
-                                foreach (PurchaseItem purchaseItem in purchaseItems)
+                                if (_customer.PurchaseHistory.Find(x => x.Purchase.Id == ids[0]).Purchase.Status == ProfileStringConstants.PENDING.FirstCharToUpper())
                                 {
-                                    Item item = ItemManager.GetById(purchaseItem.ItemId);
-                                    item.Stocks += purchaseItem.Quantity;
-                                    ItemManager.Update(item);
+                                    foreach (PurchaseItem purchaseItem in purchaseItems)
+                                    {
+                                        Item item = _itemManager.GetById(purchaseItem.ItemId);
+                                        item.Stocks += purchaseItem.Quantity;
+                                        _itemManager.Update(item);
+                                    }
                                 }
+
+                                _purchaseItemManager.Delete(purchaseItemDel);
                             }
 
-                            PurchaseItemManager.Delete(purchaseItemDel);
+                            if (_purchaseManager.Delete(purchaseDel))
+                            {
+                                LoadData();
+                                scope.Complete();
+                            }
+                            else
+                            {
+                                string message = "Can't delete. Please try again.";
+                                string caption = "Error";
+                                MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                            }
                         }
-
-                        if (PurchaseManager.Delete(purchaseDel))
-                        {
-                            LoadData();
-                            scope.Complete();
-                        }
-                        else
-                        {
-                            string message = "Can't delete. Please try again.";
-                            string caption = "Error";
-                            MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                        }
+                    }
+                    else
+                    {
+                        string message = "Can't delete. Please try again.";
+                        string caption = "Error";
+                        MessageBox.Show(message, caption, MessageBoxButtons.OK);
                     }
                 }
                 else
                 {
-                    string message = "Can't delete. Please try again.";
+                    string message = "Please select a purchase history first.";
                     string caption = "Error";
                     MessageBox.Show(message, caption, MessageBoxButtons.OK);
                 }
             }
-            else
+            catch(Exception ex)
             {
-                string message = "Please select a purchase history first.";
-                string caption = "Error";
-                MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                Logger.log.Error(ex.ToString());
             }
         }
 
         private void EditProfileButton_Click(object sender, EventArgs e)
         {
-            if (EditProfileButton.Text == editButton)
+            try
             {
-                EditProfileButton.Text = saveButton;
-                textBoxName.ReadOnly = false;
-                textBoxAddress.ReadOnly = false;
-                textBoxEmail.ReadOnly = false;
-                textBoxPhone.ReadOnly = false;
-            }
-            else
-            {    
-                string[] name = textBoxName.Text.Split(' ');
-
-                if (name.Length == 3 && !string.IsNullOrEmpty(name[0]) && !string.IsNullOrEmpty(name[2]))
+                if (EditProfileButton.Text.Equals(ProfileStringConstants.EDIT_PROFILE, StringComparison.OrdinalIgnoreCase))
                 {
-                    using (TransactionScope scope = new TransactionScope())
-                    {
-                        Customer.Info.FirstName = name[0];
-                        Customer.Info.MiddleName = name[1];
-                        Customer.Info.LastName = name[2];
-                        Customer.Info.Address = textBoxAddress.Text;
-                        Customer.Info.Email = textBoxEmail.Text;
-                        Customer.Info.ContactNo = textBoxPhone.Text;
-
-                        if (CustomerManager.Update(Customer.Info))
-                        {
-                            IForm logInForm = Application.OpenForms.OfType<LogInForm>().FirstOrDefault();
-                            ((LogInForm)logInForm).LoadData();
-                            scope.Complete();
-                        }
-                        else
-                        {
-                            string message = "Can't update profile. Please try again.";
-                            string caption = "Error";
-                            MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                        }
-                    }
+                    EditProfileButton.Text = ProfileStringConstants.SAVE_BUTTON.FirstCharToUpper();
+                    textBoxName.ReadOnly = false;
+                    textBoxAddress.ReadOnly = false;
+                    textBoxEmail.ReadOnly = false;
+                    textBoxPhone.ReadOnly = false;
                 }
                 else
                 {
-                    string message = "Entered Name should follow format \"firstname middlename lastname\"";
-                    string caption = "Error";
-                    MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                    string[] name = textBoxName.Text.Split(' ');
+
+                    if (name.Length == 3 && !string.IsNullOrWhiteSpace(name[0]) && !string.IsNullOrWhiteSpace(name[2]))
+                    {
+                        using (TransactionScope scope = new TransactionScope())
+                        {
+                            _customer.Info.FirstName = name[0];
+                            _customer.Info.MiddleName = name[1];
+                            _customer.Info.LastName = name[2];
+                            _customer.Info.Address = textBoxAddress.Text;
+                            _customer.Info.Email = textBoxEmail.Text;
+                            _customer.Info.ContactNo = textBoxPhone.Text;
+
+                            if (_customerManager.Update(_customer.Info))
+                            {
+                                CustomerForm logInForm = Application.OpenForms.OfType<CustomerForm>().FirstOrDefault();
+                                logInForm.LoadData();
+                                scope.Complete();
+                            }
+                            else
+                            {
+                                string message = "Can't update profile. Please try again.";
+                                string caption = "Error";
+                                MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string message = "Entered Name should follow format \"firstname middlename lastname\"";
+                        string caption = "Error";
+                        MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                    }
+
+                    EditProfileButton.Text = ProfileStringConstants.EDIT_PROFILE.FirstCharToUpper();
+                    textBoxName.ReadOnly = true;
+                    textBoxAddress.ReadOnly = true;
+                    textBoxEmail.ReadOnly = true;
+                    textBoxPhone.ReadOnly = true;
                 }
 
-                EditProfileButton.Text = editButton;
-                textBoxName.ReadOnly = true;
-                textBoxAddress.ReadOnly = true;
-                textBoxEmail.ReadOnly = true;
-                textBoxPhone.ReadOnly = true;
+                LoadData();
             }
-
-            LoadData();
+            catch (Exception ex)
+            {
+                Logger.log.Error(ex.ToString());
+            }
         }
 
         private void ProfileForm_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -322,9 +343,14 @@ namespace ShoppingCart.Forms
             }
             else
             {
-                IForm logInForm = Application.OpenForms.OfType<LogInForm>().FirstOrDefault();
-                ((LogInForm)logInForm).EnableButtons(true);
+                CustomerForm logInForm = Application.OpenForms.OfType<CustomerForm>().FirstOrDefault();
+                logInForm.EnableButtons(true);
             }
+        }
+
+        private void ProfileForm_Load(object sender, EventArgs e)
+        {
+            LoadData();
         }
     }
 }

@@ -42,20 +42,14 @@ namespace ShoppingCart.Business.Manager
 
         private string GetCondition (T data)
         {
-            string condition = "";
+            string condition = string.Empty;
             PropertyInfo[] properties = typeof(T).GetProperties();
 
             foreach (PropertyInfo property in properties)
             {
-                if (property.PropertyType == typeof(string) && property.GetValue(data) != null)
-                {
-                    condition += $"{property.Name}=@{property.Name} ";
-                }
-                else if (property.PropertyType == typeof(int) && (int)property.GetValue(data) >= 0)
-                {
-                    condition += $"{property.Name}=@{property.Name} ";
-                }
-                else if (property.PropertyType == typeof(float) && (float)property.GetValue(data) >= 0)
+                if ((property.PropertyType == typeof(string) && property.GetValue(data) != null) ||
+                    (property.PropertyType == typeof(int) && (int)property.GetValue(data) >= 0) ||
+                    (property.PropertyType == typeof(float) && (float)property.GetValue(data) >= 0))
                 {
                     condition += $"{property.Name}=@{property.Name} ";
                 }

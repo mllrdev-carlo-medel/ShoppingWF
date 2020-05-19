@@ -11,3 +11,5 @@ D:\Visual Studio\Projects\ShoppingCart\ShoppingCart.Business\obj\Debug\ShoppingC
 D:\Visual Studio\Projects\ShoppingCart\ShoppingCart.Business\obj\Debug\ShoppingCart.Business.csproj.CopyComplete
 D:\Visual Studio\Projects\ShoppingCart\ShoppingCart.Business\obj\Debug\ShoppingCart.Business.dll
 D:\Visual Studio\Projects\ShoppingCart\ShoppingCart.Business\obj\Debug\ShoppingCart.Business.pdb
+D:\Visual Studio\Projects\ShoppingCart\ShoppingCart.Business\bin\Debug\Dapper.Contrib.dll
+D:\Visual Studio\Projects\ShoppingCart\ShoppingCart.Business\bin\Debug\Dapper.Contrib.xml

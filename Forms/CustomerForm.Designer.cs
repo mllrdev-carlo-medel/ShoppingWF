@@ -40,12 +40,14 @@ namespace ShoppingCart.Forms
             this.id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.address = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.textBoxSearchName = new System.Windows.Forms.TextBox();
+            this.textBoxSearchFirstName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxSearchAddress = new System.Windows.Forms.TextBox();
             this.searchButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.textBoxSearchLastName = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // membershipIdLabel
@@ -126,23 +128,23 @@ namespace ShoppingCart.Forms
             this.address.Text = "Address";
             this.address.Width = 250;
             // 
-            // textBoxSearchName
+            // textBoxSearchFirstName
             // 
-            this.textBoxSearchName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxSearchFirstName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxSearchName.Location = new System.Drawing.Point(135, 11);
-            this.textBoxSearchName.Name = "textBoxSearchName";
-            this.textBoxSearchName.Size = new System.Drawing.Size(523, 22);
-            this.textBoxSearchName.TabIndex = 6;
+            this.textBoxSearchFirstName.Location = new System.Drawing.Point(135, 11);
+            this.textBoxSearchFirstName.Name = "textBoxSearchFirstName";
+            this.textBoxSearchFirstName.Size = new System.Drawing.Size(215, 22);
+            this.textBoxSearchFirstName.TabIndex = 6;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(94, 17);
+            this.label1.Size = new System.Drawing.Size(76, 17);
             this.label1.TabIndex = 7;
-            this.label1.Text = "Search Name";
+            this.label1.Text = "First Name";
             // 
             // label2
             // 
@@ -184,17 +186,35 @@ namespace ShoppingCart.Forms
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
+            // textBoxSearchLastName
+            // 
+            this.textBoxSearchLastName.Location = new System.Drawing.Point(438, 9);
+            this.textBoxSearchLastName.Name = "textBoxSearchLastName";
+            this.textBoxSearchLastName.Size = new System.Drawing.Size(220, 22);
+            this.textBoxSearchLastName.TabIndex = 12;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(356, 14);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(76, 17);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Last Name";
+            // 
             // CustomerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(778, 443);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.textBoxSearchLastName);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.searchButton);
             this.Controls.Add(this.textBoxSearchAddress);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBoxSearchName);
+            this.Controls.Add(this.textBoxSearchFirstName);
             this.Controls.Add(this.customerListView);
             this.Controls.Add(this.signUpButton);
             this.Controls.Add(this.confirmButton);
@@ -215,7 +235,7 @@ namespace ShoppingCart.Forms
         private System.Windows.Forms.Button confirmButton;
         private System.Windows.Forms.Button signUpButton;
         private System.Windows.Forms.ListView customerListView;
-        private System.Windows.Forms.TextBox textBoxSearchName;
+        private System.Windows.Forms.TextBox textBoxSearchFirstName;
         private System.Windows.Forms.ColumnHeader id;
         private System.Windows.Forms.ColumnHeader name;
         private System.Windows.Forms.ColumnHeader address;
@@ -224,5 +244,7 @@ namespace ShoppingCart.Forms
         private System.Windows.Forms.TextBox textBoxSearchAddress;
         private System.Windows.Forms.Button searchButton;
         private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.TextBox textBoxSearchLastName;
+        private System.Windows.Forms.Label label3;
     }
 }

@@ -2,7 +2,7 @@
 using ShoppingCart.Business.Manager.Interfaces;
 using System;
 using System.Collections.Generic;
-using ShoppingCart.Business.Entity;
+using ShoppingCart.Business.Entities;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -188,6 +188,47 @@ namespace ShoppingCart.Forms
         private void AddItemsForm_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
+        }
+
+        private void RemoveButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (itemListView.CheckedItems.Count > 0)
+                {
+                    List<Item> items = new List<Item>();
+
+                    foreach (ListViewItem listViewItem in itemListView.CheckedItems)
+                    {
+                        items.Add(new Item { Id = listViewItem.SubItems[1].Text.ToInt(-1) });
+                    }
+
+                    using (TransactionScope scope = new TransactionScope())
+                    {
+                        if (_itemManager.Delete(items))
+                        {
+                            LoadData();
+                            scope.Complete();
+                        }
+                        else
+                        {
+                            string message = "The item is already in used.\nCan't proceed.";
+                            string caption = "Error.";
+                            MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                        }
+                    }
+                }
+                else
+                {
+                    string message = "Select items to remove.";
+                    string caption = "Empty.";
+                    MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.log.Error(ex.ToString());
+            }
         }
     }
 }

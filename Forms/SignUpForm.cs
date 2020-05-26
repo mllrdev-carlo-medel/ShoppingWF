@@ -1,5 +1,5 @@
 ﻿using ShoppingCart.Business.Log;
-using ShoppingCart.Business.Entity;
+using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Extensions;

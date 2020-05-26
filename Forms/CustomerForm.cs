@@ -1,4 +1,4 @@
-﻿using ShoppingCart.Business.Entity;
+﻿using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using System.Collections.Generic;
@@ -94,34 +94,17 @@ namespace ShoppingCart.Forms
         {
             try
             {
-                if (!string.IsNullOrWhiteSpace(textBoxSearchName.Text) || !string.IsNullOrWhiteSpace(textBoxSearchAddress.Text))
+                if (!string.IsNullOrWhiteSpace(textBoxSearchFirstName.Text) || 
+                    !string.IsNullOrWhiteSpace(textBoxSearchLastName.Text) ||
+                    !string.IsNullOrWhiteSpace(textBoxSearchAddress.Text))
                 {
                     List<ListViewItem> listViewItems = new List<ListViewItem>();
                     Customer customerSearch = new Customer
                     {
+                        FirstName = string.IsNullOrWhiteSpace(textBoxSearchFirstName.Text) ? null : textBoxSearchFirstName.Text,
+                        LastName = string.IsNullOrWhiteSpace(textBoxSearchLastName.Text) ? null : textBoxSearchLastName.Text,
                         Address = string.IsNullOrWhiteSpace(textBoxSearchAddress.Text) ? null : textBoxSearchAddress.Text
                     };
-
-                    if (!string.IsNullOrWhiteSpace(textBoxSearchName.Text))
-                    {
-                        string[] searchName = textBoxSearchName.Text.Split(' ');
-
-                        if (searchName.Length == 3)
-                        {
-                            customerSearch.FirstName = searchName[0];
-                            customerSearch.MiddleName = searchName[1];
-                            customerSearch.LastName = searchName[2];
-                        }
-                        else if (searchName.Length == 2)
-                        {
-                            customerSearch.FirstName = searchName[0];
-                            customerSearch.LastName = searchName[1];
-                        }
-                        else if (searchName.Length == 1)
-                        {
-                            customerSearch.FirstName = searchName[0];
-                        }
-                    }
 
                     foreach (Customer customer in _manager.GetAllWhere(customerSearch))
                     {
@@ -153,8 +136,9 @@ namespace ShoppingCart.Forms
         private void CancelButton_Click(object sender, EventArgs e)
         {
             LoadData();
-            textBoxSearchName.Text = string.Empty;
+            textBoxSearchFirstName.Text = string.Empty;
             textBoxSearchAddress.Text = string.Empty;
+            textBoxSearchLastName.Text = string.Empty;
         }
 
         private void CustomerForm_Load(object sender, EventArgs e)

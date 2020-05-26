@@ -1,4 +1,4 @@
-﻿using ShoppingCart.Business.Entity;
+﻿using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Business.Model;
@@ -42,7 +42,7 @@ namespace ShoppingCart.Forms
                     listViewItems.Add(new ListViewItem(new[] { string.Empty,
                                                             purchaseDetails.PurchaseItem.ItemId.ToString(),
                                                             purchaseDetails.Name,
-                                                            purchaseDetails.Price.ToString(),
+                                                            purchaseDetails.PurchaseItem.Price.ToString(),
                                                             purchaseDetails.PurchaseItem.Quantity.ToString(),
                                                             purchaseDetails.PurchaseItem.SubTotal.ToString()})
                     {
@@ -236,7 +236,7 @@ namespace ShoppingCart.Forms
 
         private void CheckoutButton_Click(object sender, EventArgs e)
         {
-            try
+                try
             {
                 using (TransactionScope scope = new TransactionScope())
                 {

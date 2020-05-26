@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShoppingCart.Business.Entity
+namespace ShoppingCart.Business.Entities
 {
     public class PurchaseItem
     {

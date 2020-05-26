@@ -1,4 +1,4 @@
-﻿using ShoppingCart.Business.Entity;
+﻿using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Log;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
@@ -60,11 +60,7 @@ namespace ShoppingCart.Forms
                 {
                     if (purchaseHistory.Purchase.Status == ProfileStringConstants.PENDING)
                     {
-                        foreach (PurchaseDetails purchaseDetails in purchaseHistory.PurchaseDetails)
-                        {
-                            purchaseDetails.PurchaseItem.SubTotal = purchaseDetails.Price * purchaseDetails.PurchaseItem.Quantity;
-                        }
-
+                        purchaseHistory.PurchaseDetails.ForEach(x => x.PurchaseItem.SubTotal = (x.PurchaseItem.Price * x.PurchaseItem.Quantity));
                         purchaseHistory.Purchase.Total = purchaseHistory.PurchaseDetails.Sum(x => x.PurchaseItem.SubTotal);
                     }
 
@@ -102,7 +98,7 @@ namespace ShoppingCart.Forms
                 {
                     listViewItems.Add(new ListViewItem(new[] { purchaseDetails.PurchaseItem.ItemId.ToString(),
                                                                purchaseDetails.Name,
-                                                               purchaseDetails.Price.ToString(),
+                                                               purchaseDetails.PurchaseItem.Price.ToString(),
                                                                purchaseDetails.PurchaseItem.Quantity.ToString(),
                                                                purchaseDetails.PurchaseItem.SubTotal.ToString()}));
                 }

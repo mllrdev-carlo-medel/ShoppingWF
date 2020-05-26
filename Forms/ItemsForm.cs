@@ -1,5 +1,5 @@
 ﻿using System;
-using ShoppingCart.Business.Entity;
+using ShoppingCart.Business.Entities;
 using System.Windows.Forms;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Business.Manager;
@@ -78,7 +78,7 @@ namespace ShoppingCart.Forms
                         foreach (ListViewItem listViewItem in itemListView.CheckedItems)
                         {
                             Item item = _itemManager.GetById(listViewItem.SubItems[1].Text.ToInt(-1));
-                            PurchaseItem purchaseItem = new PurchaseItem { PurchaseId = _purchase.Id, ItemId = item.Id, Quantity = 1, SubTotal = item.Price };
+                            PurchaseItem purchaseItem = new PurchaseItem { PurchaseId = _purchase.Id, ItemId = item.Id, Price = item.Price, Quantity = 1, SubTotal = item.Price };
                             item.Stocks -= 1;
 
                             if ((purchaseItem.Id = _purchaseItemManager.Add(purchaseItem)) > 0 && _itemManager.Update(item))

@@ -1,13 +1,10 @@
-﻿using ShoppingCart.Business.Entity;
+﻿using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Log;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Business.Model;
+using ShoppingCart.Constants;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShoppingCart.Factory
 {
@@ -38,7 +35,17 @@ namespace ShoppingCart.Factory
 
                     foreach (PurchaseItem purchaseItem in purchaseItemManager.GetAllWhere(conditionPurchaseItem))
                     {
-                        purchaseHistory.PurchaseDetails.Add(new PurchaseDetails(purchaseItem, itemManager.GetById(purchaseItem.ItemId)));
+                        if (purchaseHistory.Purchase.Status == ProfileStringConstants.PENDING)
+                        {
+                            Item item = itemManager.GetById(purchaseItem.ItemId);
+                            purchaseItem.Price = item.Price;
+                            purchaseItem.SubTotal = purchaseItem.Quantity * item.Price;
+                            purchaseHistory.PurchaseDetails.Add(new PurchaseDetails(purchaseItem, item));
+                        }
+                        else
+                        {
+                            purchaseHistory.PurchaseDetails.Add(new PurchaseDetails(purchaseItem, itemManager.GetById(purchaseItem.ItemId)));
+                        }
                     }
                 }
 

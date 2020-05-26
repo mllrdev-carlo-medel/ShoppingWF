@@ -38,12 +38,13 @@
             this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.price = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.stocks = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.RemoveButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // CancelButton
             // 
             this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.Location = new System.Drawing.Point(433, 10);
+            this.CancelButton.Location = new System.Drawing.Point(436, 10);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 27);
             this.CancelButton.TabIndex = 11;
@@ -54,7 +55,7 @@
             // SearchButton
             // 
             this.SearchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SearchButton.Location = new System.Drawing.Point(352, 10);
+            this.SearchButton.Location = new System.Drawing.Point(355, 10);
             this.SearchButton.Name = "SearchButton";
             this.SearchButton.Size = new System.Drawing.Size(75, 27);
             this.SearchButton.TabIndex = 10;
@@ -68,7 +69,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxSearch.Location = new System.Drawing.Point(21, 12);
             this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(325, 22);
+            this.textBoxSearch.Size = new System.Drawing.Size(328, 22);
             this.textBoxSearch.TabIndex = 9;
             // 
             // AddItemButton
@@ -76,7 +77,7 @@
             this.AddItemButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AddItemButton.Location = new System.Drawing.Point(20, 514);
             this.AddItemButton.Name = "AddItemButton";
-            this.AddItemButton.Size = new System.Drawing.Size(485, 27);
+            this.AddItemButton.Size = new System.Drawing.Size(248, 27);
             this.AddItemButton.TabIndex = 8;
             this.AddItemButton.Text = "Add item";
             this.AddItemButton.UseVisualStyleBackColor = true;
@@ -97,10 +98,10 @@
             this.itemListView.FullRowSelect = true;
             this.itemListView.GridLines = true;
             this.itemListView.HideSelection = false;
-            this.itemListView.Location = new System.Drawing.Point(21, 43);
+            this.itemListView.Location = new System.Drawing.Point(20, 40);
             this.itemListView.MultiSelect = false;
             this.itemListView.Name = "itemListView";
-            this.itemListView.Size = new System.Drawing.Size(484, 465);
+            this.itemListView.Size = new System.Drawing.Size(487, 465);
             this.itemListView.TabIndex = 7;
             this.itemListView.UseCompatibleStateImageBehavior = false;
             this.itemListView.View = System.Windows.Forms.View.Details;
@@ -130,16 +131,29 @@
             this.stocks.Text = "Stocks";
             this.stocks.Width = 100;
             // 
+            // RemoveButton
+            // 
+            this.RemoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.RemoveButton.Location = new System.Drawing.Point(278, 514);
+            this.RemoveButton.Name = "RemoveButton";
+            this.RemoveButton.Size = new System.Drawing.Size(230, 27);
+            this.RemoveButton.TabIndex = 12;
+            this.RemoveButton.Text = "Remove";
+            this.RemoveButton.UseVisualStyleBackColor = true;
+            this.RemoveButton.Click += new System.EventHandler(this.RemoveButton_Click);
+            // 
             // AddItemsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(527, 553);
+            this.ClientSize = new System.Drawing.Size(530, 553);
+            this.Controls.Add(this.RemoveButton);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.SearchButton);
             this.Controls.Add(this.textBoxSearch);
             this.Controls.Add(this.AddItemButton);
             this.Controls.Add(this.itemListView);
+            this.MaximumSize = new System.Drawing.Size(548, 600);
             this.MinimumSize = new System.Drawing.Size(500, 600);
             this.Name = "AddItemsForm";
             this.Text = "Add Items";
@@ -162,5 +176,6 @@
         private System.Windows.Forms.ColumnHeader name;
         private System.Windows.Forms.ColumnHeader price;
         private System.Windows.Forms.ColumnHeader stocks;
+        private System.Windows.Forms.Button RemoveButton;
     }
 }

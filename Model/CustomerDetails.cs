@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ShoppingCart.Business.Entity;
+using ShoppingCart.Business.Entities;
 
 namespace ShoppingCart.Business.Model
 {

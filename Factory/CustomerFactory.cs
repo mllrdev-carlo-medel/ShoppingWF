@@ -40,6 +40,7 @@ namespace ShoppingCart.Factory
                             Item item = itemManager.GetById(purchaseItem.ItemId);
                             purchaseItem.Price = item.Price;
                             purchaseItem.SubTotal = purchaseItem.Quantity * item.Price;
+                            purchaseItemManager.Update(purchaseItem);
                             purchaseHistory.PurchaseDetails.Add(new PurchaseDetails(purchaseItem, item));
                         }
                         else

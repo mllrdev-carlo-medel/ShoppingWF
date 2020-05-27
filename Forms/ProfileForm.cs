@@ -60,8 +60,7 @@ namespace ShoppingCart.Forms
                 {
                     if (purchaseHistory.Purchase.Status == ProfileStringConstants.PENDING)
                     {
-                        purchaseHistory.PurchaseDetails.ForEach(x => x.PurchaseItem.SubTotal = (x.PurchaseItem.Price * x.PurchaseItem.Quantity));
-                        purchaseHistory.Purchase.Total = purchaseHistory.PurchaseDetails.Sum(x => x.PurchaseItem.SubTotal);
+                        purchaseHistory.Purchase.Total = purchaseHistory.PurchaseDetails.Sum(x => (x.PurchaseItem.SubTotal = x.PurchaseItem.Price * x.PurchaseItem.Quantity));
                     }
 
                     listViewItems.Add(new ListViewItem(new[] { purchaseHistory.Purchase.Id.ToString(),

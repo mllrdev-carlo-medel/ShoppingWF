@@ -1,5 +1,5 @@
 ﻿using ShoppingCart.Business.Repository.Interfaces;
-using ShoppingCart.Business.Entity;
+using ShoppingCart.Business.Entities;
 
 namespace ShoppingCart.Business.Repository
 {

@@ -123,7 +123,7 @@
             this.MaximumSize = new System.Drawing.Size(445, 205);
             this.MinimumSize = new System.Drawing.Size(445, 205);
             this.Name = "ItemPromptForm";
-            this.Text = "ItemPromptForm";
+            this.Text = "Item";
             this.Load += new System.EventHandler(this.ItemPromptForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStocks)).EndInit();
             this.ResumeLayout(false);

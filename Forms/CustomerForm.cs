@@ -1,4 +1,4 @@
-﻿using ShoppingCart.Business.Entity;
+﻿using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using System.Collections.Generic;
@@ -94,24 +94,23 @@ namespace ShoppingCart.Forms
         {
             try
             {
-                string searchName = textBoxSearchName.Text;
-                string searchAddress = textBoxSearchAddress.Text;
-
-                if (!string.IsNullOrWhiteSpace(searchName) || !string.IsNullOrWhiteSpace(searchAddress))
+                if (!string.IsNullOrWhiteSpace(textBoxSearchFirstName.Text) || 
+                    !string.IsNullOrWhiteSpace(textBoxSearchLastName.Text) ||
+                    !string.IsNullOrWhiteSpace(textBoxSearchAddress.Text))
                 {
                     List<ListViewItem> listViewItems = new List<ListViewItem>();
-
-                    foreach (Customer customer in _manager.GetAll())
+                    Customer customerSearch = new Customer
                     {
-                        string name = $"{customer.FirstName} {customer.MiddleName} {customer.LastName}";
+                        FirstName = string.IsNullOrWhiteSpace(textBoxSearchFirstName.Text) ? null : textBoxSearchFirstName.Text,
+                        LastName = string.IsNullOrWhiteSpace(textBoxSearchLastName.Text) ? null : textBoxSearchLastName.Text,
+                        Address = string.IsNullOrWhiteSpace(textBoxSearchAddress.Text) ? null : textBoxSearchAddress.Text
+                    };
 
-                        if (name.Contains(searchName, StringComparison.OrdinalIgnoreCase) &&
-                            customer.Address.Contains(searchAddress, StringComparison.OrdinalIgnoreCase))
-                        {
-                            listViewItems.Add(new ListViewItem(new[] {customer.Id.ToString(),
-                                                                   $"{customer.FirstName} {customer.MiddleName} {customer.LastName}",
-                                                                   customer.Address}));
-                        }
+                    foreach (Customer customer in _manager.GetAllWhere(customerSearch))
+                    {
+                        listViewItems.Add(new ListViewItem(new[] {customer.Id.ToString(),
+                                                                  $"{customer.FirstName} {customer.MiddleName} {customer.LastName}",
+                                                                  customer.Address}));
                     }
 
                     if (listViewItems.Count > 0)
@@ -137,8 +136,9 @@ namespace ShoppingCart.Forms
         private void CancelButton_Click(object sender, EventArgs e)
         {
             LoadData();
-            textBoxSearchName.Text = string.Empty;
+            textBoxSearchFirstName.Text = string.Empty;
             textBoxSearchAddress.Text = string.Empty;
+            textBoxSearchLastName.Text = string.Empty;
         }
 
         private void CustomerForm_Load(object sender, EventArgs e)

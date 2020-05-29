@@ -1,5 +1,5 @@
 ﻿using ShoppingCart.Business.Log;
-using ShoppingCart.Business.Entity;
+using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Extensions;
@@ -35,7 +35,6 @@ namespace ShoppingCart.Forms
                 else
                 {
                     Customer customer = new Customer();
-                    customer.Id = PrimaryId.GetGeneratedID();
                     customer.FirstName = textBoxFirstName.Text;
                     customer.MiddleName = textBoxMiddleName.Text;
                     customer.LastName = textBoxLastName.Text;
@@ -44,11 +43,11 @@ namespace ShoppingCart.Forms
                     customer.Email = textBoxEmail.Text;
                     customer.Address = textBoxAddress.Text;
 
-                    if (_manager.Add(customer))
+                    if ((customer.Id = _manager.Add(customer)) > 0)
                     {
                         _success = true;
-                        CustomerForm logInForm = Application.OpenForms.OfType<CustomerForm>().FirstOrDefault();
-                        logInForm.LoadData();
+                        CustomerForm customerForm = Application.OpenForms.OfType<CustomerForm>().FirstOrDefault();
+                        customerForm.LoadData();
 
                         ProfileForm profileForm = new ProfileForm(customer.Id);
                         profileForm.MdiParent = this.ParentForm;
@@ -73,8 +72,8 @@ namespace ShoppingCart.Forms
         {
             if (!_success)
             {
-                CustomerForm logInForm = Application.OpenForms.OfType<CustomerForm>().FirstOrDefault();
-                logInForm.EnableButtons(true);
+                CustomerForm customerForm = Application.OpenForms.OfType<CustomerForm>().FirstOrDefault();
+                customerForm.EnableButtons(true);
             }
         }
 

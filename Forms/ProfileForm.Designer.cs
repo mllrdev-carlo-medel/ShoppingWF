@@ -277,7 +277,7 @@
             // EditProfileButton
             // 
             this.EditProfileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.EditProfileButton.Location = new System.Drawing.Point(585, 61);
+            this.EditProfileButton.Location = new System.Drawing.Point(585, 63);
             this.EditProfileButton.Name = "EditProfileButton";
             this.EditProfileButton.Size = new System.Drawing.Size(184, 27);
             this.EditProfileButton.TabIndex = 19;

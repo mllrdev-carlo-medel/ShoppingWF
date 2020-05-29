@@ -1,4 +1,4 @@
-﻿using ShoppingCart.Business.Entity;
+﻿using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Log;
 using ShoppingCart.Extensions;
 using System;

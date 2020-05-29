@@ -1,12 +1,8 @@
 ﻿using System;
-using ShoppingCart.Business.Manager;
-using ShoppingCart.Business.Entity;
 using System.Windows.Forms;
 using ShoppingCart.Business.Log;
 using log4net.Config;
 using ShoppingCart.Forms;
-using ShoppingCart.Constants;
-using ShoppingCart.Extensions;
 
 namespace ShoppingCart
 {

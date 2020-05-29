@@ -1,4 +1,4 @@
-﻿using ShoppingCart.Business.Entity;
+﻿using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Business.Model;
@@ -9,6 +9,7 @@ using ShoppingCart.Business.Log;
 using System.Linq;
 using System.Windows.Forms;
 using System.Transactions;
+using ShoppingCart.Constants;
 
 namespace ShoppingCart.Forms
 {
@@ -41,7 +42,7 @@ namespace ShoppingCart.Forms
                     listViewItems.Add(new ListViewItem(new[] { string.Empty,
                                                             purchaseDetails.PurchaseItem.ItemId.ToString(),
                                                             purchaseDetails.Name,
-                                                            purchaseDetails.Price.ToString(),
+                                                            purchaseDetails.PurchaseItem.Price.ToString(),
                                                             purchaseDetails.PurchaseItem.Quantity.ToString(),
                                                             purchaseDetails.PurchaseItem.SubTotal.ToString()})
                     {
@@ -188,15 +189,7 @@ namespace ShoppingCart.Forms
                             {
                                 _purchases.Remove(purchaseDetails);
                                 textBoxTotal.Text = ComputeTotalPrice().ToString();
-                                ItemsForm itemsForm = Application.OpenForms.OfType<ItemsForm>().FirstOrDefault();
-
-                                if (itemsForm != null)
-                                {
-                                    itemsForm.LoadData();
-                                }
-
                                 scope.Complete();
-                                LoadData();
                             }
                             else
                             {
@@ -204,6 +197,15 @@ namespace ShoppingCart.Forms
                             }
                         }
                     }
+
+                    ItemsForm itemsForm = Application.OpenForms.OfType<ItemsForm>().FirstOrDefault();
+
+                    if (itemsForm != null)
+                    {
+                        itemsForm.LoadData();
+                    }
+
+                    LoadData();
 
                     if (failures.Count > 0)
                     {
@@ -234,13 +236,13 @@ namespace ShoppingCart.Forms
 
         private void CheckoutButton_Click(object sender, EventArgs e)
         {
-            try
+                try
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
                     if (ComputeTotalPrice() > 0)
                     {
-                        _purchase.Status = "Purchased";
+                        _purchase.Status = ProfileStringConstants.PURCHASED;
                         _purchase.Date = DateTime.Now.ToString();
                         _purchase.Total = ComputeTotalPrice();
 

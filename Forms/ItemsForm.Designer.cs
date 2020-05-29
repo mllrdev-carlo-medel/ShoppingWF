@@ -35,7 +35,6 @@
             this.price = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.stocks = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AddToCartButton = new System.Windows.Forms.Button();
-            this.AddItemButton = new System.Windows.Forms.Button();
             this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.SearchButton = new System.Windows.Forms.Button();
             this.CancelButton = new System.Windows.Forms.Button();
@@ -59,12 +58,11 @@
             this.itemListView.Location = new System.Drawing.Point(13, 39);
             this.itemListView.MultiSelect = false;
             this.itemListView.Name = "itemListView";
-            this.itemListView.Size = new System.Drawing.Size(477, 465);
+            this.itemListView.Size = new System.Drawing.Size(498, 473);
             this.itemListView.TabIndex = 0;
             this.itemListView.UseCompatibleStateImageBehavior = false;
             this.itemListView.View = System.Windows.Forms.View.Details;
             this.itemListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.ItemListView_ItemChecked);
-            this.itemListView.DoubleClick += new System.EventHandler(this.ItemListView_DoubleClick);
             // 
             // columnHeader1
             // 
@@ -94,25 +92,13 @@
             // 
             this.AddToCartButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddToCartButton.Location = new System.Drawing.Point(12, 510);
+            this.AddToCartButton.Location = new System.Drawing.Point(13, 518);
             this.AddToCartButton.Name = "AddToCartButton";
-            this.AddToCartButton.Size = new System.Drawing.Size(480, 26);
+            this.AddToCartButton.Size = new System.Drawing.Size(498, 30);
             this.AddToCartButton.TabIndex = 1;
             this.AddToCartButton.Text = "Add to cart";
             this.AddToCartButton.UseVisualStyleBackColor = true;
             this.AddToCartButton.Click += new System.EventHandler(this.AddToCartButton_Click);
-            // 
-            // AddItemButton
-            // 
-            this.AddItemButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddItemButton.Location = new System.Drawing.Point(12, 542);
-            this.AddItemButton.Name = "AddItemButton";
-            this.AddItemButton.Size = new System.Drawing.Size(481, 26);
-            this.AddItemButton.TabIndex = 2;
-            this.AddItemButton.Text = "Add item";
-            this.AddItemButton.UseVisualStyleBackColor = true;
-            this.AddItemButton.Click += new System.EventHandler(this.AddItemButton_Click);
             // 
             // textBoxSearch
             // 
@@ -120,13 +106,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxSearch.Location = new System.Drawing.Point(13, 10);
             this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(318, 22);
+            this.textBoxSearch.Size = new System.Drawing.Size(339, 22);
             this.textBoxSearch.TabIndex = 4;
             // 
             // SearchButton
             // 
             this.SearchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SearchButton.Location = new System.Drawing.Point(337, 8);
+            this.SearchButton.Location = new System.Drawing.Point(358, 8);
             this.SearchButton.Name = "SearchButton";
             this.SearchButton.Size = new System.Drawing.Size(75, 27);
             this.SearchButton.TabIndex = 5;
@@ -137,7 +123,7 @@
             // CancelButton
             // 
             this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.Location = new System.Drawing.Point(418, 8);
+            this.CancelButton.Location = new System.Drawing.Point(439, 8);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 27);
             this.CancelButton.TabIndex = 6;
@@ -149,13 +135,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(505, 580);
+            this.ClientSize = new System.Drawing.Size(526, 560);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.SearchButton);
             this.Controls.Add(this.textBoxSearch);
-            this.Controls.Add(this.AddItemButton);
             this.Controls.Add(this.AddToCartButton);
             this.Controls.Add(this.itemListView);
+            this.MinimumSize = new System.Drawing.Size(450, 600);
             this.Name = "ItemsForm";
             this.Text = "ItemsForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ItemsForm_FormClosing);
@@ -169,7 +155,6 @@
 
         private System.Windows.Forms.ListView itemListView;
         private System.Windows.Forms.Button AddToCartButton;
-        private System.Windows.Forms.Button AddItemButton;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader id;
         private System.Windows.Forms.ColumnHeader name;

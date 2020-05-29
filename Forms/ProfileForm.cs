@@ -1,4 +1,4 @@
-﻿using ShoppingCart.Business.Entity;
+﻿using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Log;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
@@ -30,7 +30,7 @@ namespace ShoppingCart.Forms
             InitializeComponent();
             _id = id;
         }
-  
+
         public void LoadData()
         {
             try
@@ -58,11 +58,16 @@ namespace ShoppingCart.Forms
 
                 foreach (PurchaseHistory purchaseHistory in _customer.PurchaseHistory.OrderByDescending(x => DateTime.Parse(x.Purchase.Date)))
                 {
+                    if (purchaseHistory.Purchase.Status == ProfileStringConstants.PENDING)
+                    {
+                        purchaseHistory.Purchase.Total = purchaseHistory.PurchaseDetails.Sum(x => (x.PurchaseItem.SubTotal = x.PurchaseItem.Price * x.PurchaseItem.Quantity));
+                    }
+
                     listViewItems.Add(new ListViewItem(new[] { purchaseHistory.Purchase.Id.ToString(),
-                                                          purchaseHistory.Purchase.CustomerId.ToString(),
-                                                          purchaseHistory.Purchase.Status,
-                                                          purchaseHistory.Purchase.Date,
-                                                          purchaseHistory.Purchase.Total.ToString()}));
+                                                           purchaseHistory.Purchase.CustomerId.ToString(),
+                                                           purchaseHistory.Purchase.Status,
+                                                           purchaseHistory.Purchase.Date,
+                                                           purchaseHistory.Purchase.Total.ToString()}));
                 }
 
                 historyListView.Items.AddRange(listViewItems.ToArray());
@@ -92,7 +97,7 @@ namespace ShoppingCart.Forms
                 {
                     listViewItems.Add(new ListViewItem(new[] { purchaseDetails.PurchaseItem.ItemId.ToString(),
                                                                purchaseDetails.Name,
-                                                               purchaseDetails.Price.ToString(),
+                                                               purchaseDetails.PurchaseItem.Price.ToString(),
                                                                purchaseDetails.PurchaseItem.Quantity.ToString(),
                                                                purchaseDetails.PurchaseItem.SubTotal.ToString()}));
                 }
@@ -110,14 +115,14 @@ namespace ShoppingCart.Forms
         {
             try
             {
-                PurchaseHistory purchaseHistory = _customer.PurchaseHistory.Find(x => x.Purchase.Status == ProfileStringConstants.PENDING.FirstCharToUpper());
+                PurchaseHistory purchaseHistory = _customer.PurchaseHistory.Find(x => x.Purchase.Status == ProfileStringConstants.PENDING);
                 Purchase purchase;
 
                 if (purchaseHistory == null)
                 {
-                    purchase = new Purchase(PrimaryId.GetGeneratedID(), _customer.Info.Id, ProfileStringConstants.PENDING.FirstCharToUpper(), DateTime.Now.ToString(), 0);
+                    purchase = new Purchase { CustomerId = _customer.Info.Id, Status = ProfileStringConstants.PENDING, Date = DateTime.Now.ToString(), Total = 0 };
 
-                    if (_purchaseManager.Add(purchase))
+                    if ((purchase.Id = _purchaseManager.Add(purchase)) > 0)
                     {
                         LoadData();
                         EnableNewPurchaseButton(false);
@@ -156,7 +161,7 @@ namespace ShoppingCart.Forms
 
                         if (purchaseItems.Count > 0)
                         {
-                            if (_customer.PurchaseHistory.Find(x => x.Purchase.Id == ids[0]).Purchase.Status == ProfileStringConstants.PENDING.FirstCharToUpper())
+                            if (_customer.PurchaseHistory.Find(x => x.Purchase.Id == ids[0]).Purchase.Status == ProfileStringConstants.PENDING)
                             {
                                 foreach (PurchaseItem purchaseItem in purchaseItems)
                                 {
@@ -172,9 +177,9 @@ namespace ShoppingCart.Forms
                         if (_purchaseManager.Delete(purchaseDel))
                         {
                             LoadData();
-                            purchase = new Purchase(PrimaryId.GetGeneratedID(), _customer.Info.Id, ProfileStringConstants.PENDING.FirstCharToUpper(), DateTime.Now.ToString(), 0);
+                            purchase = new Purchase { CustomerId = _customer.Info.Id, Status = ProfileStringConstants.PENDING, Date = DateTime.Now.ToString(), Total = 0 };
 
-                            if (_purchaseManager.Add(purchase))
+                            if ((purchase.Id = _purchaseManager.Add(purchase)) > 0)
                             {
                                 LoadData();
                                 EnableNewPurchaseButton(false);
@@ -223,7 +228,7 @@ namespace ShoppingCart.Forms
 
                             if (purchaseItems.Count > 0)
                             {
-                                if (_customer.PurchaseHistory.Find(x => x.Purchase.Id == ids[0]).Purchase.Status == ProfileStringConstants.PENDING.FirstCharToUpper())
+                                if (_customer.PurchaseHistory.Find(x => x.Purchase.Id == ids[0]).Purchase.Status == ProfileStringConstants.PENDING)
                                 {
                                     foreach (PurchaseItem purchaseItem in purchaseItems)
                                     {
@@ -263,7 +268,7 @@ namespace ShoppingCart.Forms
                     MessageBox.Show(message, caption, MessageBoxButtons.OK);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.log.Error(ex.ToString());
             }
@@ -275,7 +280,8 @@ namespace ShoppingCart.Forms
             {
                 if (EditProfileButton.Text.Equals(ProfileStringConstants.EDIT_PROFILE, StringComparison.OrdinalIgnoreCase))
                 {
-                    EditProfileButton.Text = ProfileStringConstants.SAVE_BUTTON.FirstCharToUpper();
+                    string saveText = ProfileStringConstants.SAVE_BUTTON.FirstCharToUpper();
+                    EditProfileButton.Text = saveText;
                     textBoxName.ReadOnly = false;
                     textBoxAddress.ReadOnly = false;
                     textBoxEmail.ReadOnly = false;
@@ -317,7 +323,8 @@ namespace ShoppingCart.Forms
                         MessageBox.Show(message, caption, MessageBoxButtons.OK);
                     }
 
-                    EditProfileButton.Text = ProfileStringConstants.EDIT_PROFILE.FirstCharToUpper();
+                    string editText = ProfileStringConstants.EDIT_PROFILE.FirstCharToUpper();
+                    EditProfileButton.Text = editText;
                     textBoxName.ReadOnly = true;
                     textBoxAddress.ReadOnly = true;
                     textBoxEmail.ReadOnly = true;
@@ -343,14 +350,26 @@ namespace ShoppingCart.Forms
             }
             else
             {
-                CustomerForm logInForm = Application.OpenForms.OfType<CustomerForm>().FirstOrDefault();
-                logInForm.EnableButtons(true);
+                CustomerForm customerForm = Application.OpenForms.OfType<CustomerForm>().FirstOrDefault();
+
+                if (customerForm != null)
+                {
+                    customerForm.EnableButtons(true);
+
+                }
+                else
+                {
+                    MainForm mainForm = Application.OpenForms.OfType<MainForm>().FirstOrDefault();
+                    mainForm.EnableCustomerMenu(true);
+                }
             }
         }
 
         private void ProfileForm_Load(object sender, EventArgs e)
         {
             LoadData();
+            MainForm mainForm = Application.OpenForms.OfType<MainForm>().FirstOrDefault();
+            mainForm.EnableCustomerMenu(false);
         }
     }
 }

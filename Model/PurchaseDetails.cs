@@ -1,4 +1,4 @@
-﻿using ShoppingCart.Business.Entity;
+﻿using ShoppingCart.Business.Entities;
 
 namespace ShoppingCart.Business.Model
 {
@@ -6,13 +6,11 @@ namespace ShoppingCart.Business.Model
     {
         public PurchaseItem PurchaseItem { get; set; }
         public string Name { get; set; }
-        public float Price { get; set; }
 
         public PurchaseDetails(PurchaseItem purchaseItem, Item item)
         {
             PurchaseItem = purchaseItem;
             Name = item.Name;
-            Price = item.Price;
         }
     }
 }

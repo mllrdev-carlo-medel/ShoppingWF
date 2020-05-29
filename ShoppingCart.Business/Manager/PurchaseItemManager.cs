@@ -1,4 +1,4 @@
-﻿using ShoppingCart.Business.Entity;
+﻿using ShoppingCart.Business.Entities;
 using ShoppingCart.Business.Repository;
 using ShoppingCart.Business.Repository.Interfaces;
 using ShoppingCart.Business.Manager.Interfaces;

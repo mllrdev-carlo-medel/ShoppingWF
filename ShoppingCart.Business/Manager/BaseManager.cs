@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using ShoppingCart.Business.Repository.Interfaces;
 
@@ -10,7 +11,7 @@ namespace ShoppingCart.Business.Manager
     {
         public abstract IRepository<T> Repository { get; }
 
-        public bool Add(T data)
+        public int Add(T data)
         {
             return Repository.Add(data);
         }
@@ -42,7 +43,8 @@ namespace ShoppingCart.Business.Manager
 
         private string GetCondition (T data)
         {
-            string condition = string.Empty;
+            string condition;
+            List<string> fieldList = new List<string>();
             PropertyInfo[] properties = typeof(T).GetProperties();
 
             foreach (PropertyInfo property in properties)
@@ -51,10 +53,11 @@ namespace ShoppingCart.Business.Manager
                     (property.PropertyType == typeof(int) && (int)property.GetValue(data) >= 0) ||
                     (property.PropertyType == typeof(float) && (float)property.GetValue(data) >= 0))
                 {
-                    condition += $"{property.Name}=@{property.Name} ";
+                    fieldList.Add($"{property.Name}=@{property.Name}");
                 }
             }
 
+            condition = fieldList.Count > 0 ? string.Join(" AND ", fieldList) : string.Empty;
             return condition;
         }
     }

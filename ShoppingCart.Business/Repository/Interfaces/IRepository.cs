@@ -9,7 +9,7 @@ namespace ShoppingCart.Business.Repository.Interfaces
     public interface IRepository<T>
     {
         List<T> GetAll();
-        bool Add(T data);
+        int Add(T data);
         T GetById(int id);
         List<T> GetAllWhere(T datas, string condition);
         bool Update(T data);

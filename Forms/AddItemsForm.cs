@@ -10,13 +10,14 @@ using ShoppingCart.Business.Model;
 using ShoppingCart.Business.Log;
 using ShoppingCart.Extensions;
 using System.Transactions;
+using ShoppingCartWebAPI.HttpClients.Interfaces;
+using ShoppingCartWebAPI.HttpClients;
 
 namespace ShoppingCart.Forms
 {
     public partial class AddItemsForm : Form
     {
-        private readonly IManager<Item> _itemManager = new ItemManager();
-        private readonly IManager<PurchaseItem> _purchaseItemManager = new PurchaseItemManager();
+        private readonly IHttpClients<Item> _itemClient = new ItemHttpClient();
 
         public AddItemsForm()
         {
@@ -35,7 +36,7 @@ namespace ShoppingCart.Forms
                 itemListView.Items.Clear();
                 List<ListViewItem> listViewItems = new List<ListViewItem>();
 
-                foreach (Item item in _itemManager.GetAll())
+                foreach (Item item in _itemClient.GetAll())
                 {
                     ListViewItem listViewItem = new ListViewItem(new[] {string.Empty,
                                                                         item.Id.ToString(),
@@ -65,12 +66,12 @@ namespace ShoppingCart.Forms
                 if (itemListView.SelectedItems.Count > 0)
                 {
                     int id = itemListView.SelectedItems[0].SubItems[1].Text.ToInt(-1);
-                    Item item = _itemManager.GetById(id);
+                    Item item = _itemClient.GetById(id);
                     Item returnedItem = ShowDialogNewItem(item);
 
                     if (returnedItem != null)
                     {
-                        if (_itemManager.Update(item))
+                        if (_itemClient.Update(item))
                         {
                             LoadData();
                         }
@@ -98,7 +99,7 @@ namespace ShoppingCart.Forms
 
                 if (returnedItem != null)
                 {
-                    if (_itemManager.Add(returnedItem) > 0)
+                    if (_itemClient.Add(returnedItem) > 0)
                     {
                         LoadData();
                     }
@@ -143,7 +144,7 @@ namespace ShoppingCart.Forms
                     List<ListViewItem> listViewItems = new List<ListViewItem>();
                     Item searchItem = new Item { Name = searchName };
 
-                    foreach (Item item in _itemManager.GetAllWhere(searchItem))
+                    foreach (Item item in _itemClient.Find(searchItem))
                     {
                         ListViewItem listViewItem = new ListViewItem(new[] {string.Empty,
                                                                         item.Id.ToString(),
@@ -205,7 +206,7 @@ namespace ShoppingCart.Forms
 
                     using (TransactionScope scope = new TransactionScope())
                     {
-                        if (_itemManager.Delete(items))
+                        if (_itemClient.Delete(items))
                         {
                             LoadData();
                             scope.Complete();

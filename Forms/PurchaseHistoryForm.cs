@@ -3,6 +3,8 @@ using ShoppingCart.Business.Log;
 using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Extensions;
+using ShoppingCartWebAPI.HttpClients;
+using ShoppingCartWebAPI.HttpClients.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,8 +19,8 @@ namespace ShoppingCart.Forms
 {
     public partial class PurchaseHistoryForm : Form
     {
-        private readonly IManager<Purchase> _purchaseManager = new PurchaseManager();
-        private readonly IManager<Customer> _customerManager = new CustomerManager();
+        private readonly IHttpClients<Purchase> _purchaseClient = new PurchaseHttpClient();
+        private readonly IHttpClients<Customer> _customerClient = new CustomerHttpClient();
 
         public PurchaseHistoryForm()
         {
@@ -37,9 +39,9 @@ namespace ShoppingCart.Forms
                 purchaseListView.Items.Clear();
                 List<ListViewItem> listViewItems = new List<ListViewItem>();
 
-                foreach (Purchase purchase in _purchaseManager.GetAll().OrderByDescending(x => DateTime.Parse(x.Date)))
+                foreach (Purchase purchase in _purchaseClient.GetAll().OrderByDescending(x => DateTime.Parse(x.Date)))
                 {
-                    Customer customer = _customerManager.GetById(purchase.CustomerId);
+                    Customer customer = _customerClient.GetById(purchase.CustomerId);
 
                     listViewItems.Add(new ListViewItem(new[] {$"{customer.FirstName} {customer.MiddleName} {customer.LastName}",
                                                               purchase.CustomerId.ToString(),

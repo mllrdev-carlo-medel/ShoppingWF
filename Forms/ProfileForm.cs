@@ -12,16 +12,18 @@ using System.Data;
 using System.Linq;
 using System.Transactions;
 using System.Windows.Forms;
+using ShoppingCartWebAPI.HttpClients.Interfaces;
+using ShoppingCartWebAPI.HttpClients;
 
 namespace ShoppingCart.Forms
 {
     public partial class ProfileForm : Form
     {
         private readonly int _id;
-        private readonly IManager<Customer> _customerManager = new CustomerManager();
-        private readonly IManager<Item> _itemManager = new ItemManager();
-        private readonly IManager<PurchaseItem> _purchaseItemManager = new PurchaseItemManager();
-        private readonly IManager<Purchase> _purchaseManager = new PurchaseManager();
+        private readonly IHttpClients<Customer> _customerClient = new CustomerHttpClient();
+        private readonly IHttpClients<Item> _itemClient = new ItemHttpClient();
+        private readonly IHttpClients<PurchaseItem> _purchaseItemClient = new PurchaseItemHttpClient();
+        private readonly IHttpClients<Purchase> _purchaseClient = new PurchaseHttpClient();
 
         private CustomerDetails _customer;
 
@@ -122,7 +124,7 @@ namespace ShoppingCart.Forms
                 {
                     purchase = new Purchase { CustomerId = _customer.Info.Id, Status = ProfileStringConstants.PENDING, Date = DateTime.Now.ToString(), Total = 0 };
 
-                    if ((purchase.Id = _purchaseManager.Add(purchase)) > 0)
+                    if ((purchase.Id = _purchaseClient.Add(purchase)) > 0)
                     {
                         LoadData();
                         EnableNewPurchaseButton(false);
@@ -157,7 +159,7 @@ namespace ShoppingCart.Forms
                         List<PurchaseItem> purchaseItemDel = new List<PurchaseItem>() { new PurchaseItem { PurchaseId = ids[0] } };
                         List<Purchase> purchaseDel = new List<Purchase>() { new Purchase { Id = ids[0] } };
 
-                        List<PurchaseItem> purchaseItems = _purchaseItemManager.GetAllWhere(purchaseItemDel[0]);
+                        List<PurchaseItem> purchaseItems = _purchaseItemClient.Find(purchaseItemDel[0]);
 
                         if (purchaseItems.Count > 0)
                         {
@@ -165,21 +167,21 @@ namespace ShoppingCart.Forms
                             {
                                 foreach (PurchaseItem purchaseItem in purchaseItems)
                                 {
-                                    Item item = _itemManager.GetById(purchaseItem.ItemId);
+                                    Item item = _itemClient.GetById(purchaseItem.ItemId);
                                     item.Stocks += purchaseItem.Quantity;
-                                    _itemManager.Update(item);
+                                    _itemClient.Update(item);
                                 }
                             }
 
-                            _purchaseItemManager.Delete(purchaseItemDel);
+                            _purchaseItemClient.Delete(purchaseItemDel);
                         }
 
-                        if (_purchaseManager.Delete(purchaseDel))
+                        if (_purchaseClient.Delete(purchaseDel))
                         {
                             LoadData();
                             purchase = new Purchase { CustomerId = _customer.Info.Id, Status = ProfileStringConstants.PENDING, Date = DateTime.Now.ToString(), Total = 0 };
 
-                            if ((purchase.Id = _purchaseManager.Add(purchase)) > 0)
+                            if ((purchase.Id = _purchaseClient.Add(purchase)) > 0)
                             {
                                 LoadData();
                                 EnableNewPurchaseButton(false);
@@ -224,7 +226,7 @@ namespace ShoppingCart.Forms
 
                         using (TransactionScope scope = new TransactionScope())
                         {
-                            List<PurchaseItem> purchaseItems = _purchaseItemManager.GetAllWhere(purchaseItemDel[0]);
+                            List<PurchaseItem> purchaseItems = _purchaseItemClient.Find(purchaseItemDel[0]);
 
                             if (purchaseItems.Count > 0)
                             {
@@ -232,16 +234,16 @@ namespace ShoppingCart.Forms
                                 {
                                     foreach (PurchaseItem purchaseItem in purchaseItems)
                                     {
-                                        Item item = _itemManager.GetById(purchaseItem.ItemId);
+                                        Item item = _itemClient.GetById(purchaseItem.ItemId);
                                         item.Stocks += purchaseItem.Quantity;
-                                        _itemManager.Update(item);
+                                        _itemClient.Update(item);
                                     }
                                 }
 
-                                _purchaseItemManager.Delete(purchaseItemDel);
+                                _purchaseItemClient.Delete(purchaseItemDel);
                             }
 
-                            if (_purchaseManager.Delete(purchaseDel))
+                            if (_purchaseClient.Delete(purchaseDel))
                             {
                                 LoadData();
                                 scope.Complete();
@@ -302,7 +304,7 @@ namespace ShoppingCart.Forms
                             _customer.Info.Email = textBoxEmail.Text;
                             _customer.Info.ContactNo = textBoxPhone.Text;
 
-                            if (_customerManager.Update(_customer.Info))
+                            if (_customerClient.Update(_customer.Info))
                             {
                                 CustomerForm logInForm = Application.OpenForms.OfType<CustomerForm>().FirstOrDefault();
                                 logInForm.LoadData();

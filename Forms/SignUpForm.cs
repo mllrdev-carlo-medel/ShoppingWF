@@ -6,12 +6,14 @@ using ShoppingCart.Extensions;
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using ShoppingCartWebAPI.HttpClients.Interfaces;
+using ShoppingCartWebAPI.HttpClients;
 
 namespace ShoppingCart.Forms
 {
     public partial class SignUpForm : Form
     {
-        private readonly IManager<Customer> _manager = new CustomerManager();
+        private readonly IHttpClients<Customer> _client = new CustomerHttpClient();
 
         private bool _success = false;
 
@@ -43,7 +45,7 @@ namespace ShoppingCart.Forms
                     customer.Email = textBoxEmail.Text;
                     customer.Address = textBoxAddress.Text;
 
-                    if ((customer.Id = _manager.Add(customer)) > 0)
+                    if ((customer.Id = _client.Add(customer)) > 0)
                     {
                         _success = true;
                         CustomerForm customerForm = Application.OpenForms.OfType<CustomerForm>().FirstOrDefault();

@@ -26,9 +26,7 @@ namespace ShoppingCart.Factory
                 Purchase conditionPurchase = new Purchase { CustomerId = id };
                 PurchaseItem conditionPurchaseItem = new PurchaseItem();
 
-                PurchaseHttpClient purchaseHttpClient = new PurchaseHttpClient();
-
-                foreach (Purchase purchase in purchaseHttpClient.Find(conditionPurchase))
+                foreach (Purchase purchase in purchaseClient.Find(conditionPurchase))
                 {
                     customer.PurchaseHistory.Add(new PurchaseHistory(purchase));
                 }

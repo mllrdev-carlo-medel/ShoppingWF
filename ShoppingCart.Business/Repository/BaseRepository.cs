@@ -101,7 +101,7 @@ namespace ShoppingCart.Business.Repository
             catch (Exception ex)
             {
                 Logger.log.Error(ex.StackTrace);
-                return null;
+                return new List<T>();
             }
         }
 
@@ -141,8 +141,6 @@ namespace ShoppingCart.Business.Repository
                 {
                     foreach (T data in datas)
                     {
-                        PropertyInfo[] properties = typeof(T).GetProperties();
-
                         string query = $"DELETE FROM {Table} WHERE {condition}";
                         int count = Connection.Execute(query, data);
 

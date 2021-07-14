@@ -10,15 +10,16 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Transactions;
 using ShoppingCart.Constants;
+using ShoppingCartWebAPI.HttpClients.Interfaces;
+using ShoppingCartWebAPI.HttpClients;
 
 namespace ShoppingCart.Forms
 {
     public partial class CartForm : Form
     {
-        private readonly IManager<Item> _itemManager = new ItemManager();
-        private readonly IManager<PurchaseItem> _purchaseItemManager = new PurchaseItemManager();
-
-        private readonly IManager<Purchase> _purchaseManager = new PurchaseManager();
+        private readonly IHttpClients<Item> _itemClient = new ItemHttpClient();
+        private readonly IHttpClients<PurchaseItem> _purchaseItemClient = new PurchaseItemHttpClient();
+        private readonly IHttpClients<Purchase> _purchaseClient = new PurchaseHttpClient();
 
         private readonly Purchase _purchase;
         private readonly List<PurchaseDetails> _purchases;
@@ -113,7 +114,7 @@ namespace ShoppingCart.Forms
             {
                 try
                 {
-                    Item item = _itemManager.GetById(cartListView.SelectedItems[0].SubItems[1].Text.ToInt(-1));
+                    Item item = _itemClient.GetById(cartListView.SelectedItems[0].SubItems[1].Text.ToInt(-1));
                     PurchaseDetails purchaseDetails = _purchases.Find(x => x.PurchaseItem.ItemId == item.Id);
 
                     using (TransactionScope scope = new TransactionScope())
@@ -126,7 +127,7 @@ namespace ShoppingCart.Forms
                             purchaseDetails.PurchaseItem.Quantity = quantity;
                             purchaseDetails.PurchaseItem.SubTotal = quantity * item.Price;
 
-                            if (!_purchaseItemManager.Update(purchaseDetails.PurchaseItem) || !_itemManager.Update(item))
+                            if (!_purchaseItemClient.Update(purchaseDetails.PurchaseItem) || !_itemClient.Update(item))
                             {
                                 string message = "Can't update item.";
                                 string caption = "Please try again.";
@@ -178,14 +179,14 @@ namespace ShoppingCart.Forms
                     {
                         using (TransactionScope scope = new TransactionScope())
                         {
-                            Item item = _itemManager.GetById(listViewItem.SubItems[1].Text.ToInt(-1));
+                            Item item = _itemClient.GetById(listViewItem.SubItems[1].Text.ToInt(-1));
                             PurchaseDetails purchaseDetails = _purchases.Find(x => x.PurchaseItem.ItemId == item.Id);
 
                             int[] id = { purchaseDetails.PurchaseItem.Id };
                             List<PurchaseItem> purchaseItem = new List<PurchaseItem>() { new PurchaseItem { Id = id[0] } };
                             item.Stocks += purchaseDetails.PurchaseItem.Quantity;
 
-                            if (_purchaseItemManager.Delete(purchaseItem) && _itemManager.Update(item))
+                            if (_purchaseItemClient.Delete(purchaseItem) && _itemClient.Update(item))
                             {
                                 _purchases.Remove(purchaseDetails);
                                 textBoxTotal.Text = ComputeTotalPrice().ToString();
@@ -246,7 +247,7 @@ namespace ShoppingCart.Forms
                         _purchase.Date = DateTime.Now.ToString();
                         _purchase.Total = ComputeTotalPrice();
 
-                        if (_purchaseManager.Update(_purchase))
+                        if (_purchaseClient.Update(_purchase))
                         {
                             string caption = "Success";
                             string message = "Thank you. Please come again.";
@@ -283,7 +284,7 @@ namespace ShoppingCart.Forms
             {
                 List<Purchase> purchases = new List<Purchase>() { new Purchase { Id = _purchase.Id} };
 
-                if (!_purchaseManager.Delete(purchases))
+                if (!_purchaseClient.Delete(purchases))
                 {
                     Logger.log.Error($"A pending purchase with id {_purchase.Id} can't be deleted.");
                 }

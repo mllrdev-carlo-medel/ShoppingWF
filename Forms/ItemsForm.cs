@@ -10,13 +10,15 @@ using ShoppingCart.Extensions;
 using System.Linq;
 using ShoppingCart.Business.Log;
 using System.Drawing;
+using ShoppingCartWebAPI.HttpClients.Interfaces;
+using ShoppingCartWebAPI.HttpClients;
 
 namespace ShoppingCart.Forms
 {
     public partial class ItemsForm : Form
     {
-        private readonly IManager<Item> _itemManager = new ItemManager();
-        private readonly IManager<PurchaseItem> _purchaseItemManager = new PurchaseItemManager();
+        private readonly IHttpClients<Item> _itemClient = new ItemHttpClient();
+        private readonly IHttpClients<PurchaseItem> purchaseItemClient = new PurchaseItemHttpClient();
 
         private readonly List<PurchaseDetails> _purchases;
         private readonly Purchase _purchase;
@@ -40,7 +42,7 @@ namespace ShoppingCart.Forms
                 itemListView.Items.Clear();
                 List<ListViewItem> listViewItems = new List<ListViewItem>();
 
-                foreach (Item item in _itemManager.GetAll())
+                foreach (Item item in _itemClient.GetAll())
                 {
                     if (item.Stocks > 0)
                     {
@@ -77,11 +79,11 @@ namespace ShoppingCart.Forms
                     {
                         foreach (ListViewItem listViewItem in itemListView.CheckedItems)
                         {
-                            Item item = _itemManager.GetById(listViewItem.SubItems[1].Text.ToInt(-1));
+                            Item item = _itemClient.GetById(listViewItem.SubItems[1].Text.ToInt(-1));
                             PurchaseItem purchaseItem = new PurchaseItem { PurchaseId = _purchase.Id, ItemId = item.Id, Price = item.Price, Quantity = 1, SubTotal = item.Price };
                             item.Stocks -= 1;
 
-                            if ((purchaseItem.Id = _purchaseItemManager.Add(purchaseItem)) > 0 && _itemManager.Update(item))
+                            if ((purchaseItem.Id = purchaseItemClient.Add(purchaseItem)) > 0 && _itemClient.Update(item))
                             {
                                 _purchases.Add(new PurchaseDetails(purchaseItem, item));
                                 LoadData();
@@ -119,7 +121,7 @@ namespace ShoppingCart.Forms
             {
                 int id = e.Item.SubItems[1].Text.ToInt(-1);
 
-                if (_purchases.Find(x => x.PurchaseItem.ItemId == id) != null || _itemManager.GetById(id).Stocks == 0)
+                if (_purchases.Find(x => x.PurchaseItem.ItemId == id) != null || _itemClient.GetById(id).Stocks == 0)
                 {
                     e.Item.Checked = false;
                 }
@@ -157,7 +159,7 @@ namespace ShoppingCart.Forms
                     List<ListViewItem> listViewItems = new List<ListViewItem>();
                     Item searchItem = new Item { Name = searchName };
 
-                    foreach (Item item in _itemManager.GetAllWhere(searchItem))
+                    foreach (Item item in _itemClient.Find(searchItem))
                     {
                         ListViewItem listViewItem = new ListViewItem(new[] {string.Empty,
                                                                         item.Id.ToString(),

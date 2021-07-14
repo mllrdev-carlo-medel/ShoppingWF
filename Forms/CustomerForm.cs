@@ -7,12 +7,14 @@ using ShoppingCart.Extensions;
 using System;
 using System.Linq;
 using ShoppingCart.Business.Log;
+using ShoppingCartWebAPI.HttpClients.Interfaces;
+using ShoppingCartWebAPI.HttpClients;
 
 namespace ShoppingCart.Forms
 {
     public partial class CustomerForm : Form
     {
-        private readonly IManager<Customer> _manager = new CustomerManager();
+        private readonly IHttpClients<Customer> _client = new CustomerHttpClient();
 
         public CustomerForm()
         {
@@ -26,7 +28,7 @@ namespace ShoppingCart.Forms
                 customerListView.Items.Clear();
                 List<ListViewItem> listViewItems = new List<ListViewItem>();
 
-                foreach (Customer customer in _manager.GetAll())
+                foreach (Customer customer in _client.GetAll())
                 {
                     listViewItems.Add(new ListViewItem(new[] {customer.Id.ToString(),
                                                           $"{customer.FirstName} {customer.MiddleName} {customer.LastName}",
@@ -52,7 +54,7 @@ namespace ShoppingCart.Forms
             try
             {
                 int id = textBoxMemberId.Text.ToInt(-1);
-                Customer customer = _manager.GetById(id);
+                Customer customer = _client.GetById(id);
 
                 if (customer == null)
                 {
@@ -106,7 +108,7 @@ namespace ShoppingCart.Forms
                         Address = string.IsNullOrWhiteSpace(textBoxSearchAddress.Text) ? null : textBoxSearchAddress.Text
                     };
 
-                    foreach (Customer customer in _manager.GetAllWhere(customerSearch))
+                    foreach (Customer customer in _client.Find(customerSearch))
                     {
                         listViewItems.Add(new ListViewItem(new[] {customer.Id.ToString(),
                                                                   $"{customer.FirstName} {customer.MiddleName} {customer.LastName}",

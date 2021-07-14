@@ -4,6 +4,8 @@ using ShoppingCart.Business.Manager;
 using ShoppingCart.Business.Manager.Interfaces;
 using ShoppingCart.Business.Model;
 using ShoppingCart.Constants;
+using ShoppingCartWebAPI.HttpClients;
+using ShoppingCartWebAPI.HttpClients.Interfaces;
 using System;
 
 namespace ShoppingCart.Factory
@@ -14,17 +16,17 @@ namespace ShoppingCart.Factory
         {
             try
             {
-                IManager<Customer> customerManager = new CustomerManager();
-                IManager<Purchase> purchaseManager = new PurchaseManager();
-                IManager<PurchaseItem> purchaseItemManager = new PurchaseItemManager();
-                IManager<Item> itemManager = new ItemManager();
+                IHttpClients<Customer> customerClient = new CustomerHttpClient();
+                IHttpClients<Purchase> purchaseClient = new PurchaseHttpClient();
+                IHttpClients<PurchaseItem> purchaseItemClient = new PurchaseItemHttpClient();
+                IHttpClients<Item> itemClient = new ItemHttpClient();
 
-                CustomerDetails customer = new CustomerDetails(customerManager.GetById(id));
+                CustomerDetails customer = new CustomerDetails(customerClient.GetById(id));
 
                 Purchase conditionPurchase = new Purchase { CustomerId = id };
                 PurchaseItem conditionPurchaseItem = new PurchaseItem();
 
-                foreach (Purchase purchase in purchaseManager.GetAllWhere(conditionPurchase))
+                foreach (Purchase purchase in purchaseClient.Find(conditionPurchase))
                 {
                     customer.PurchaseHistory.Add(new PurchaseHistory(purchase));
                 }
@@ -33,19 +35,19 @@ namespace ShoppingCart.Factory
                 {
                     conditionPurchaseItem.PurchaseId = purchaseHistory.Purchase.Id;
 
-                    foreach (PurchaseItem purchaseItem in purchaseItemManager.GetAllWhere(conditionPurchaseItem))
+                    foreach (PurchaseItem purchaseItem in purchaseItemClient.Find(conditionPurchaseItem))
                     {
                         if (purchaseHistory.Purchase.Status == ProfileStringConstants.PENDING)
                         {
-                            Item item = itemManager.GetById(purchaseItem.ItemId);
+                            Item item = itemClient.GetById(purchaseItem.ItemId);
                             purchaseItem.Price = item.Price;
                             purchaseItem.SubTotal = purchaseItem.Quantity * item.Price;
-                            purchaseItemManager.Update(purchaseItem);
+                            purchaseItemClient.Update(purchaseItem);
                             purchaseHistory.PurchaseDetails.Add(new PurchaseDetails(purchaseItem, item));
                         }
                         else
                         {
-                            purchaseHistory.PurchaseDetails.Add(new PurchaseDetails(purchaseItem, itemManager.GetById(purchaseItem.ItemId)));
+                            purchaseHistory.PurchaseDetails.Add(new PurchaseDetails(purchaseItem, itemClient.GetById(purchaseItem.ItemId)));
                         }
                     }
                 }
@@ -54,6 +56,7 @@ namespace ShoppingCart.Factory
             }
             catch(Exception ex)
             {
+                Console.WriteLine("cmedel error");
                 Logger.log.Error(ex.ToString());
                 return null;
             }
